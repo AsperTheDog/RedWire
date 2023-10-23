@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://ddtqu2m3j5pjn"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_sh64r"]
+[ext_resource type="PackedScene" uid="uid://c0hslepy1rxnu" path="res://scenes/world.tscn" id="2_d3l16"]
+[ext_resource type="PackedScene" uid="uid://diurl1x0378ds" path="res://scenes/UI.tscn" id="2_gv0m2"]
+
+[node name="Main" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_sh64r")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="World" parent="." instance=ExtResource("2_d3l16")]
+
+[node name="UI" parent="." instance=ExtResource("2_gv0m2")]

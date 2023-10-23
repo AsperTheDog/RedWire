@@ -1,0 +1,494 @@
+[gd_scene load_steps=20 format=3 uid="uid://diurl1x0378ds"]
+
+[ext_resource type="Texture2D" uid="uid://dc4nb2tg21enf" path="res://tiles/tileset_0001_Layer-31.png" id="1_k8vjh"]
+[ext_resource type="Script" path="res://scripts/UI.gd" id="1_vtre6"]
+[ext_resource type="Texture2D" uid="uid://dowi4vb566ya2" path="res://tiles/tileset_0000_Layer-32.png" id="2_a5jli"]
+[ext_resource type="Texture2D" uid="uid://r0qc53ovoj8k" path="res://tiles/tileset_0002_Layer-29.png" id="3_qsvmw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dco3o"]
+atlas = ExtResource("1_k8vjh")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1085"]
+atlas = ExtResource("2_a5jli")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5sql3"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eawu0"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5olb6"]
+atlas = ExtResource("2_a5jli")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mu6u"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dbxum"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qer4i"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tue8e"]
+atlas = ExtResource("2_a5jli")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qahgj"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sfb7x"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2gbl6"]
+atlas = ExtResource("2_a5jli")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2os4f"]
+atlas = ExtResource("3_qsvmw")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="Gradient" id="Gradient_ww03v"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hhd5s"]
+gradient = SubResource("Gradient_ww03v")
+
+[node name="UI" type="Node"]
+script = ExtResource("1_vtre6")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="Drawer" type="Panel" parent="UILayer"]
+anchors_preset = -1
+anchor_left = 0.791
+anchor_top = 0.057
+anchor_right = 1.009
+anchor_bottom = 0.992
+offset_left = -0.231995
+offset_top = 3.064
+offset_right = -0.36792
+offset_bottom = 0.18396
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="scroll" type="ScrollContainer" parent="UILayer/Drawer/margin"]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="UILayer/Drawer/margin/scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="Wire" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Wire"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Wire/TileBG"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_dco3o")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_dco3o")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Wire/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Wire/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Repeater" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Repeater"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_n1085")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5sql3")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_eawu0")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Comparator" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Comparator"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_5olb6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_1mu6u")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_dbxum")
+expand_mode = 5
+
+[node name="TileTex4" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_qer4i")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Negator" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Negator"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_tue8e")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_qahgj")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_sfb7x")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Negator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Generator" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Generator"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_2gbl6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_2os4f")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="TextureButton" type="TextureButton" parent="UILayer/Drawer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.016
+anchor_top = 0.464
+anchor_right = -0.016
+anchor_bottom = 0.537
+offset_left = 0.0160003
+offset_top = -40.172
+offset_right = 17.016
+offset_bottom = 39.524
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = SubResource("GradientTexture2D_hhd5s")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="ClosedPoint" type="Control" parent="UILayer/Drawer"]
+layout_mode = 1
+anchor_left = 0.08
+anchor_right = 0.08
+offset_left = -0.0800018
+offset_right = -0.0800018
+
+[node name="OpenedPoint" type="Control" parent="UILayer/Drawer"]
+layout_mode = 1
+anchor_left = 0.96
+anchor_right = 0.96
+offset_left = 0.0399933
+offset_right = 0.0399933
+
+[node name="Control" type="Panel" parent="UILayer"]
+anchors_preset = -1
+anchor_left = 0.008
+anchor_top = 0.06
+anchor_right = 0.641
+anchor_bottom = 0.123
+offset_left = -0.216001
+offset_top = 0.119999
+offset_right = -0.432007
+offset_bottom = 0.295998
+
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/Control/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Background:"
+fit_content = true
+autowrap_mode = 0
+
+[node name="BGColor" type="ColorPickerButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+text = "         "
+color = Color(0, 0, 0.184314, 1)
+edit_alpha = false
+
+[node name="VSeparator" type="VSeparator" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Wire:"
+fit_content = true
+autowrap_mode = 0
+
+[node name="WireColor" type="ColorPickerButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+text = "         "
+color = Color(1, 0, 0, 1)
+edit_alpha = false
+
+[node name="VSeparator2" type="VSeparator" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Overwrite" type="CheckButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+focus_mode = 0
+text = "Overwrite"
+
+[node name="Panel" type="Panel" parent="UILayer"]
+anchors_preset = -1
+anchor_right = 0.999
+anchor_bottom = 0.048
+offset_right = 0.151855
+offset_bottom = -0.104
+
+[node name="MenuBar" type="MenuBar" parent="UILayer/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 9.442
+
+[node name="File" type="PopupMenu" parent="UILayer/Panel/MenuBar"]
+item_count = 4
+item_0/text = "Save"
+item_0/id = 0
+item_1/text = "Load"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "New"
+item_3/id = 3
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -128
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="pressed" from="UILayer/Drawer/TextureButton" to="." method="toggleDrawer"]
