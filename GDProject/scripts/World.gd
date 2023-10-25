@@ -24,6 +24,7 @@ enum Layer {
 	PH_REDSTONE2,
 	PH_REDSTONE3,
 	PH_VALVE,
+	OVERLAY,
 	ALL
 }
 
@@ -57,9 +58,21 @@ var machines: Dictionary = {
 }
 var pendingActions: Array[UpdateAction] = []
 
+var placingRotation: Machine.Dir = Machine.Dir.UP
+var dragging: bool = false
+
+
+func _ready():
+	Save.wireChanged.connect(updateWireColor)
+	updateWireColor(Save.wireColor)
+
+
+func _process(delta: float) -> void:
+	if dragging:
+		updateDragging()
+
 
 func _physics_process(delta: float) -> void:
-	tick += 1
 	var count = 0
 	while count < pendingActions.size():
 		var action: UpdateAction = pendingActions[count]
@@ -69,9 +82,16 @@ func _physics_process(delta: float) -> void:
 			pendingActions.remove_at(count)
 			count -= 1
 		count += 1
+	tick += 1
 
 
-func addObject(type: MachineType, pos: Vector2i, rot: Machine.Dir):
+func updateWireColor(color: Color):
+	set_layer_modulate(Layer.REDSTONE1, color)
+	set_layer_modulate(Layer.REDSTONE2, color)
+	set_layer_modulate(Layer.REDSTONE3, color)
+
+
+func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
 	if type == MachineType.NONE or machines[type] == null:
 		world.erase(pos)
 		updateTextures(Layer.ALL, pos)
@@ -94,6 +114,7 @@ func updateTextures(layer: Layer, pos: Vector2i):
 		erase_cell(layer, pos)
 	else:
 		var cellData: TileInfo = world[pos].getTileAtLayer(layer)
+		if cellData == null: return
 		set_cell(layer, pos, cellData.atlas, cellData.coords, cellData.altID)
 
 
@@ -119,6 +140,14 @@ func removePhantomAtPos(pos: Vector2i):
 	erase_cell(Layer.PH_VALVE as int, pos)
 
 
+func placeOverlay(pos: Vector2i):
+	set_cell(Layer.OVERLAY as int, pos, 0, Vector2i.ZERO, 0)
+
+
+func removeOverlay(pos: Vector2i):
+	erase_cell(Layer.OVERLAY as int, pos)
+
+
 func requestUpdate(delay: int, pos: Vector2i):
 	if pos not in world: return
 	var update := UpdateAction.new(tick + delay, pos, world[pos].getType())
@@ -126,5 +155,36 @@ func requestUpdate(delay: int, pos: Vector2i):
 
 
 func getTileAt(pos: Vector2i):
-	if pos not in world: return null
+	if isTileEmpty(pos): return null
 	return world[pos]
+
+
+func isTileEmpty(pos: Vector2i):
+	return not pos in world
+
+
+func getPowerAt(pos: Vector2i, from: Machine.Dir) -> int:
+	if isTileEmpty(pos): return 0
+	return world[pos].getPower(from)
+
+
+func updateDragging():
+	var tilePos: Vector2i = lastMousePos
+	if not isTileEmpty(tilePos) and not Save.doOverwrite:
+		return
+	placeMachine(Save.selectedMachine, tilePos, placingRotation)
+
+
+var lastMousePos: Vector2i = Vector2i.ZERO
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var halfSize := get_viewport_rect().size / 2
+		removeOverlay(lastMousePos)
+		lastMousePos = local_to_map(to_local((event.position - halfSize) / owner.getCurrentZoom()))
+		placeOverlay(lastMousePos)
+
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("drag"): dragging = true
+	elif event.is_action_released("drag"): dragging = false

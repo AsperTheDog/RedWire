@@ -10,10 +10,6 @@ func update():
 	pass
 
 
-func getLayout():
-	pass
-
-
 func getPower(dir: Dir):
 	pass
 

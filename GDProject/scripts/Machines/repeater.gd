@@ -1,18 +1,18 @@
 extends Machine
 class_name Repeater
 
-
+var ticks: int = 1
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 
 
+func isEqual(other: Machine) -> bool:
+	return super.isEqual(other) and other.ticks == ticks
+
+
 func update():
-	pass
-
-
-func getLayout():
 	pass
 
 

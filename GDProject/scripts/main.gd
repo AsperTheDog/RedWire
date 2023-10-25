@@ -5,7 +5,7 @@ var moving: bool = false:
 		if moving == value: return
 		moving = value
 		if moving:
-			origWorld = $Camera2D.position
+			origWorld = $world.position
 
 var origMouse: Vector2 = Vector2.ZERO
 var origWorld: Vector2 = Vector2.ZERO
@@ -18,9 +18,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("zoom_up"):
-		$Camera2D.zoom *= 0.9
-	elif Input.is_action_just_pressed("zoom_down"):
 		$Camera2D.zoom *= 1.1
+	elif Input.is_action_just_pressed("zoom_down"):
+		$Camera2D.zoom *= 0.9
 	moving = Input.is_action_pressed("move")
 
 
@@ -32,4 +32,8 @@ func _input(event: InputEvent):
 		elif event.is_released():
 			moving = false
 	elif moving and event is InputEventMouseMotion:
-		$Camera2D.position = ((origMouse - event.position) / $Camera2D.zoom + origWorld)
+		$world.position = (-((origMouse - event.position) / $Camera2D.zoom) + origWorld)
+
+
+func getCurrentZoom():
+	return $Camera2D.zoom

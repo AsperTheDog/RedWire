@@ -1,8 +1,13 @@
-[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://buv88dy0yaxhi"]
+[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://buv88dy0yaxhi"]
 
 [ext_resource type="Texture2D" uid="uid://dowi4vb566ya2" path="res://tiles/tileset_0000_Layer-32.png" id="1_7l41x"]
+[ext_resource type="Texture2D" uid="uid://54wpntg4svmh" path="res://tiles/square-16.png" id="1_gejd1"]
 [ext_resource type="Texture2D" uid="uid://dc4nb2tg21enf" path="res://tiles/tileset_0001_Layer-31.png" id="2_ogsdc"]
 [ext_resource type="Texture2D" uid="uid://r0qc53ovoj8k" path="res://tiles/tileset_0002_Layer-29.png" id="3_01bpq"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bx240"]
+texture = ExtResource("1_gejd1")
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jnekc"]
 resource_name = "BaseObjs"
@@ -3232,6 +3237,7 @@ texture = ExtResource("3_01bpq")
 0:4/3/transpose = true
 
 [resource]
-sources/2 = SubResource("TileSetAtlasSource_jnekc")
-sources/3 = SubResource("TileSetAtlasSource_axpav")
-sources/4 = SubResource("TileSetAtlasSource_0jiu0")
+sources/0 = SubResource("TileSetAtlasSource_bx240")
+sources/1 = SubResource("TileSetAtlasSource_jnekc")
+sources/2 = SubResource("TileSetAtlasSource_axpav")
+sources/3 = SubResource("TileSetAtlasSource_0jiu0")

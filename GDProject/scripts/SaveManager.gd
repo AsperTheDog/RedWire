@@ -18,3 +18,5 @@ var doOverwrite: bool = true:
 	set(value):
 		doOverwrite = value
 		overwriteChanged.emit(value)
+
+var selectedMachine: World.MachineType = World.MachineType.WIRE

@@ -11,20 +11,21 @@ enum Dir {
 var pos: Vector2i
 var world: World
 var rot: Dir
-var power: int
+var power: int = -1
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	self.world = world
 	self.pos = pos
 	self.rot = rot
+	world.requestUpdate(0, pos)
+
+
+func isEqual(other: Machine) -> bool:
+	return other.getType() == getType() and other.pos == pos and other.rot == rot
 
 
 func update():
-	pass
-
-
-func getLayout():
 	pass
 
 

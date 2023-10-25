@@ -1,22 +1,28 @@
 extends Node
 
+var currentDragMachine: World.MachineType:
+	set(value):
+		currentDragMachine = value
+		updatePressedButton(value)
+		Save.selectedMachine = currentDragMachine
 
-@onready var gridButtons: Array[TextureButton] = [
-	$UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin/TileTex,
-	$UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin/TileTex,
-	$UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin/TileTex,
-	$UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin/TileTex,
-	$UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex
-]
+@onready var gridButtons: Dictionary = {
+	World.MachineType.WIRE: $UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin/TileTex,
+	World.MachineType.REPEATER: $UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin/TileTex,
+	World.MachineType.COMPARATOR: $UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin/TileTex,
+	World.MachineType.NEGATOR: $UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin/TileTex,
+	World.MachineType.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex
+}
 
 
 func _ready() -> void:
 	Save.wireChanged.connect(onWireColorChange)
 	Save.bgChanged.connect(onBGColorChange)
-	for butt in gridButtons:
+	for buttKey in gridButtons:
+		var butt = gridButtons[buttKey]
 		butt.mouse_entered.connect(func(): butt.get_node("../../hover").show())
 		butt.mouse_exited.connect(func(): butt.get_node("../../hover").hide())
-		butt.pressed.connect(updatePressedButton.bind(butt))
+		butt.pressed.connect(func(): currentDragMachine = buttKey)
 	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color_changed.connect(func(color): Save.bgColor = color)
 	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color_changed.connect(func(color): Save.wireColor = color)
 	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.toggled.connect(func(pressed): Save.doOverwrite = pressed)
@@ -25,19 +31,18 @@ func _ready() -> void:
 	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.set_pressed_no_signal(Save.doOverwrite)
 	onWireColorChange(Save.wireColor)
 	onBGColorChange(Save.bgColor)
-	
+	currentDragMachine = World.MachineType.WIRE
 
 
 func _process(delta: float):
 	if Input.is_action_just_pressed("drawer"):
 		toggleDrawer()
-	
 
 
-func updatePressedButton(pressed: TextureButton):
+func updatePressedButton(pressed: World.MachineType):
 	for butt in gridButtons:
-		butt.get_node("../../press").visible = false
-	pressed.get_node("../../press").visible = true
+		gridButtons[butt].get_node("../../press").visible = false
+	gridButtons[pressed].get_node("../../press").visible = true
 
 
 var isDrawerOpen: bool = true
@@ -55,7 +60,7 @@ func toggleDrawer() -> void:
 
 func onWireColorChange(color: Color):
 	for butt in gridButtons:
-		for child in butt.get_node("../").get_children():
+		for child in gridButtons[butt].get_node("../").get_children():
 			if not child is TextureRect: continue
 			child.self_modulate = color
 
