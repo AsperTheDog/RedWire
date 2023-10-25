@@ -1,5 +1,5 @@
 extends Node
-class_name Generator
+class_name Machine
 
 enum Dir {
 	UP,
@@ -8,12 +8,12 @@ enum Dir {
 	LEFT
 }
 
-var pos: Vector2
+var pos: Vector2i
 var world: World
 var rot: Dir
 
 
-func _init(world: World, pos: Vector2, rot: Dir):
+func _init(world: World, pos: Vector2i, rot: Dir):
 	self.world = world
 	self.pos = pos
 	self.rot = rot
@@ -35,5 +35,13 @@ func interact():
 	pass
 
 
-func getType() -> World.GenType:
-	return World.GenType.NONE
+func getType() -> World.MachineType:
+	return World.MachineType.NONE
+
+
+func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+	return World.TileInfo.new()
+
+
+static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir):
+	pass
