@@ -1,5 +1,7 @@
 extends Machine
-class_name Generator
+class_name Repeater
+
+
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
@@ -23,8 +25,12 @@ func interact():
 
 
 func getType() -> World.MachineType:
-	return World.MachineType.GENERATOR
+	return World.MachineType.REPEATER
 
 
 func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+	return World.TileInfo.new()
+
+
+static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
 	return World.TileInfo.new()

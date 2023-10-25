@@ -11,6 +11,7 @@ enum Dir {
 var pos: Vector2i
 var world: World
 var rot: Dir
+var power: int
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
@@ -43,5 +44,5 @@ func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
 	return World.TileInfo.new()
 
 
-static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir):
-	pass
+static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
+	return World.TileInfo.new()

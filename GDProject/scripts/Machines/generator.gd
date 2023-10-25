@@ -1,5 +1,7 @@
 extends Machine
-class_name Repeater
+class_name Generator
+
+var activated: bool = false
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
@@ -15,7 +17,7 @@ func getLayout():
 
 
 func getPower(dir: Dir):
-	pass
+	return 15 if activated else 0
 
 
 func interact():
@@ -23,8 +25,12 @@ func interact():
 
 
 func getType() -> World.MachineType:
-	return World.MachineType.REPEATER
+	return World.MachineType.GENERATOR
 
 
 func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+	return World.TileInfo.new()
+
+
+static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
 	return World.TileInfo.new()

@@ -1,5 +1,5 @@
 extends Machine
-class_name Comparator
+class_name Wire
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
@@ -23,8 +23,12 @@ func interact():
 
 
 func getType() -> World.MachineType:
-	return World.MachineType.COMPARATOR
+	return World.MachineType.WIRE
 
 
 func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+	return World.TileInfo.new()
+
+
+static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
 	return World.TileInfo.new()
