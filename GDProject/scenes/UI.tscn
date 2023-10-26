@@ -449,6 +449,18 @@ edit_alpha = false
 [node name="VSeparator2" type="VSeparator" parent="UILayer/Control/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
+[node name="RichTextLabel3" type="RichTextLabel" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "TPS:"
+fit_content = true
+autowrap_mode = 0
+
+[node name="LineEdit" type="LineEdit" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "10"
+
 [node name="Overwrite" type="CheckButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
@@ -493,3 +505,4 @@ grow_vertical = 2
 mouse_filter = 2
 
 [connection signal="pressed" from="UILayer/Drawer/TextureButton" to="." method="toggleDrawer"]
+[connection signal="text_submitted" from="UILayer/Control/MarginContainer/HBoxContainer/LineEdit" to="." method="TPSChanged"]

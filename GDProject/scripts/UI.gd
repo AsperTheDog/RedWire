@@ -76,3 +76,10 @@ func onRotationChange(rot: Machine.Dir):
 		for child in gridButtons[butt].get_node("../").get_children():
 			child.pivot_offset = child.size / 2
 			child.rotation = deg_to_rad(90 * rot)
+
+
+func TPSChanged(newTPS: String):
+	if not newTPS.is_valid_int(): return
+	var tps: int = newTPS.to_int()
+	if tps <= 0: return
+	Save.tps = tps

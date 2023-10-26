@@ -25,3 +25,8 @@ var placingRotation: Machine.Dir = Machine.Dir.UP:
 	set(value):
 		placingRotation = value
 		rotationChanged.emit(value)
+
+var tps: int = 10:
+	set(value):
+		tps = value
+		Engine.physics_ticks_per_second = tps
