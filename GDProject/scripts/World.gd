@@ -28,20 +28,30 @@ enum Layer {
 	ALL
 }
 
+
 class UpdateAction:
 	var tick: int
 	var pos: Vector2i
 	var objectType: MachineType
+	var fromSelf: bool
 	
-	func _init(tick: int, pos: Vector2i, type: MachineType):
+	func _init(tick: int, pos: Vector2i, type: MachineType, fromSelf: bool):
 		self.tick = tick
 		self.pos = pos
 		objectType = type
+		self.fromSelf = fromSelf
+
 
 class TileInfo:
 	var atlas: int = -1
 	var coords: Vector2i = Vector2i.ZERO
 	var altID: int = -1
+	
+	func _init(atlas: int = -1, coords: Vector2i = Vector2i.ZERO, altID: int = -1):
+		self.atlas = atlas
+		self.coords = coords
+		self.altID = altID
+
 
 @onready var world: Dictionary
 var tick: int = 0
@@ -70,6 +80,9 @@ func _ready():
 func _process(delta: float) -> void:
 	if dragging:
 		updateDragging()
+	if Input.is_action_just_pressed("interact"):
+		if not isTileEmpty(lastMousePos):
+			world[lastMousePos].interact()
 
 
 func _physics_process(delta: float) -> void:
@@ -78,7 +91,7 @@ func _physics_process(delta: float) -> void:
 		var action: UpdateAction = pendingActions[count]
 		if action.tick == tick:
 			if action.pos in world and world[action.pos].getType() == action.objectType:
-				world[action.pos].update()
+				world[action.pos].update(action.fromSelf)
 			pendingActions.remove_at(count)
 			count -= 1
 		count += 1
@@ -96,9 +109,8 @@ func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
 		world.erase(pos)
 		updateTextures(Layer.ALL, pos)
 		return
-	var newObj: Machine = machines[type].new(self, pos, rot)
-	world[pos] = newObj
-	requestUpdate(0, pos)
+	world[pos] = machines[type].new(self, pos, rot)
+	world[pos].update(true)
 	updateTextures(Layer.ALL, pos)
 
 
@@ -114,7 +126,9 @@ func updateTextures(layer: Layer, pos: Vector2i):
 		erase_cell(layer, pos)
 	else:
 		var cellData: TileInfo = world[pos].getTileAtLayer(layer)
-		if cellData == null: return
+		if cellData == null: 
+			erase_cell(layer, pos)
+			return
 		set_cell(layer, pos, cellData.atlas, cellData.coords, cellData.altID)
 
 
@@ -148,9 +162,9 @@ func removeOverlay(pos: Vector2i):
 	erase_cell(Layer.OVERLAY as int, pos)
 
 
-func requestUpdate(delay: int, pos: Vector2i):
-	if pos not in world: return
-	var update := UpdateAction.new(tick + delay, pos, world[pos].getType())
+func requestUpdate(delay: int, pos: Vector2i, dir: Machine.Dir):
+	if pos not in world or not world[pos].isConnected(dir): return
+	var update := UpdateAction.new(tick + delay, pos, world[pos].getType(), dir == Machine.Dir.ANY)
 	pendingActions.append(update)
 
 
@@ -168,6 +182,11 @@ func getPowerAt(pos: Vector2i, from: Machine.Dir) -> int:
 	return world[pos].getPower(from)
 
 
+func isConnectedAt(pos: Vector2i, dir: Machine.Dir) -> bool:
+	if isTileEmpty(pos): return false
+	return world[pos].isConnected(dir)
+
+
 func updateDragging():
 	var tilePos: Vector2i = lastMousePos
 	if not isTileEmpty(tilePos) and not Save.doOverwrite:
@@ -182,7 +201,6 @@ func _input(event: InputEvent) -> void:
 		removeOverlay(lastMousePos)
 		lastMousePos = local_to_map(to_local((event.position - halfSize) / owner.getCurrentZoom()))
 		placeOverlay(lastMousePos)
-
 
 
 func _unhandled_input(event: InputEvent) -> void:

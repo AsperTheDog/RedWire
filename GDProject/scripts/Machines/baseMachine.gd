@@ -5,7 +5,24 @@ enum Dir {
 	UP,
 	RIGHT,
 	DOWN,
-	LEFT
+	LEFT,
+	ANY
+}
+
+
+var opposeDir := {
+	Dir.UP: Dir.DOWN,
+	Dir.RIGHT: Dir.LEFT,
+	Dir.DOWN: Dir.UP,
+	Dir.LEFT: Dir.RIGHT,
+	Dir.ANY: Dir.ANY
+}
+var dirVectors := {
+	Dir.UP: Vector2i.UP,
+	Dir.RIGHT: Vector2i.RIGHT,
+	Dir.DOWN: Vector2i.DOWN,
+	Dir.LEFT: Vector2i.LEFT,
+	Dir.ANY: Vector2i.ZERO
 }
 
 var pos: Vector2i
@@ -18,14 +35,13 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	self.world = world
 	self.pos = pos
 	self.rot = rot
-	world.requestUpdate(0, pos)
 
 
 func isEqual(other: Machine) -> bool:
 	return other.getType() == getType() and other.pos == pos and other.rot == rot
 
 
-func update():
+func update(fromSelf: bool):
 	pass
 
 
@@ -45,5 +61,5 @@ func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
 	return World.TileInfo.new()
 
 
-static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
-	return World.TileInfo.new()
+func isConnected(dir: Dir) -> bool:
+	return false

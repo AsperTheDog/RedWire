@@ -12,7 +12,7 @@ func isEqual(other: Machine) -> bool:
 	return super.isEqual(other) and other.substractMode == substractMode
 
 
-func update():
+func update(fromSelf: bool):
 	pass
 
 
@@ -32,5 +32,5 @@ func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
 	return World.TileInfo.new()
 
 
-static func getPhantomTileAtPos(world: World, layer: World.Layer, pos: Vector2i, rot: Dir) -> World.TileInfo:
-	return World.TileInfo.new()
+func isConnected(dir: Dir) -> bool:
+	return true

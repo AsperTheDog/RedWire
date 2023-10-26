@@ -35,6 +35,7 @@ func _ready() -> void:
 
 
 func _process(delta: float):
+	
 	if Input.is_action_just_pressed("drawer"):
 		toggleDrawer()
 

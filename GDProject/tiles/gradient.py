@@ -25,7 +25,7 @@
 
 from enum import Enum
 
-colorGradient = [letter * 2 for letter in "fedcba987654321"]
+colorGradient = [letter * 2 for letter in "fedcba9876543210"]
 # Transform color gradient into list of RGB values
 colorGradient = [(val, val, val, 1) for val in [round(int(grad, 16) / 255.0, 6) for grad in colorGradient]]
 
@@ -116,5 +116,5 @@ machineWires = [
 
 total = "".join([entry.output for entry in machines + wires + machineWires])
 # Save it in a file
-with open("f:/random/codes/bigger random projs/Godot/RedstoneSimulator/tiles/gradient.txt", "w") as f:
+with open("gradient.txt", "w") as f:
     f.write(total)
