@@ -68,7 +68,6 @@ var machines: Dictionary = {
 }
 var pendingActions: Array[UpdateAction] = []
 
-var placingRotation: Machine.Dir = Machine.Dir.UP
 var dragging: bool = false
 
 
@@ -83,6 +82,8 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("interact"):
 		if not isTileEmpty(lastMousePos):
 			world[lastMousePos].interact()
+	if Input.is_action_just_pressed("rotate"):
+		Save.placingRotation = (Save.placingRotation + 1) % Machine.Dir.ANY
 
 
 func _physics_process(delta: float) -> void:
@@ -191,7 +192,7 @@ func updateDragging():
 	var tilePos: Vector2i = lastMousePos
 	if not isTileEmpty(tilePos) and not Save.doOverwrite:
 		return
-	placeMachine(Save.selectedMachine, tilePos, placingRotation)
+	placeMachine(Save.selectedMachine, tilePos, Save.placingRotation)
 
 
 var lastMousePos: Vector2i = Vector2i.ZERO

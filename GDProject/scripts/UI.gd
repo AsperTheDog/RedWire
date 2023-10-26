@@ -18,6 +18,7 @@ var currentDragMachine: World.MachineType:
 func _ready() -> void:
 	Save.wireChanged.connect(onWireColorChange)
 	Save.bgChanged.connect(onBGColorChange)
+	Save.rotationChanged.connect(onRotationChange)
 	for buttKey in gridButtons:
 		var butt = gridButtons[buttKey]
 		butt.mouse_entered.connect(func(): butt.get_node("../../hover").show())
@@ -68,3 +69,10 @@ func onWireColorChange(color: Color):
 
 func onBGColorChange(color: Color):
 	$BackgroundLayer/ColorRect.color = color
+
+
+func onRotationChange(rot: Machine.Dir):
+	for butt in gridButtons:
+		for child in gridButtons[butt].get_node("../").get_children():
+			child.pivot_offset = child.size / 2
+			child.rotation = deg_to_rad(90 * rot)

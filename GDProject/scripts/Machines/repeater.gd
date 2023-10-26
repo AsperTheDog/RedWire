@@ -10,6 +10,8 @@ var tickInit: int = 0
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 	power = 0
+	world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
+	world.requestUpdate(0, pos - dirVectors[rot], rot)
 
 
 func isEqual(other: Machine) -> bool:
@@ -20,7 +22,7 @@ func update(fromSelf: bool):
 	if not fromSelf and processing: return
 	if not processing:
 		var source = world.getPowerAt(pos - dirVectors[rot], rot)
-		if source == bufferPower: return
+		if (0 if source == 0 else 15) == bufferPower: return
 		bufferPower = 0 if source == 0 else 15
 		world.requestUpdate(1, pos, Machine.Dir.ANY)
 		world.updateTextures(World.Layer.REDSTONE2, pos)
@@ -33,6 +35,7 @@ func update(fromSelf: bool):
 		power = bufferPower
 		processing = false
 		world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
+		world.requestUpdate(1, pos, Machine.Dir.ANY)
 		world.updateTextures(World.Layer.REDSTONE1, pos)
 
 

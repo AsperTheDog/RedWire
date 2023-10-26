@@ -3,6 +3,7 @@ extends Node
 signal bgChanged(color: Color)
 signal wireChanged(color: Color)
 signal overwriteChanged(overwrite: bool)
+signal rotationChanged(rotation: Machine.Dir)
 
 var bgColor: Color = Color.DARK_BLUE:
 	set(value):
@@ -20,3 +21,7 @@ var doOverwrite: bool = true:
 		overwriteChanged.emit(value)
 
 var selectedMachine: World.MachineType = World.MachineType.WIRE
+var placingRotation: Machine.Dir = Machine.Dir.UP:
+	set(value):
+		placingRotation = value
+		rotationChanged.emit(value)
