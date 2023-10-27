@@ -9,12 +9,12 @@ var tickInit: int = 0
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
-	power = 0
 	world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
 	world.requestUpdate(pos - dirVectors[rot], rot)
 
 
 func die():
+	super.die()
 	world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
 	world.requestUpdate(pos - dirVectors[rot], rot)
 

@@ -82,10 +82,12 @@ func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
 		if pos in world:
 			world[pos].die()
 		world.erase(pos)
-		updateTextures(Layer.ALL, pos)
+		cleanAllLayersAt(pos)
 		return
+	
 	world[pos] = machines[type].new(self, pos, rot)
 	world[pos].update()
+	cleanAllLayersAt(pos)
 	updateTextures(Layer.ALL, pos)
 
 
@@ -101,6 +103,14 @@ func updateTextures(layer: Layer, pos: Vector2i):
 		erase_cell(layer, pos)
 	else:
 		world[pos].updateTileAtLayer(layer)
+
+
+func cleanAllLayersAt(pos: Vector2i):
+	erase_cell(Layer.MACHINE, pos)
+	erase_cell(Layer.REDSTONE1, pos)
+	erase_cell(Layer.REDSTONE2, pos)
+	erase_cell(Layer.REDSTONE3, pos)
+	erase_cell(Layer.REDSTONE4, pos)
 
 
 func placeOverlay(pos: Vector2i):
@@ -135,7 +145,7 @@ func getPowerAt(pos: Vector2i, from: Machine.Dir) -> int:
 
 
 func isConnectedAt(pos: Vector2i, dir: Machine.Dir) -> bool:
-	if isTileEmpty(pos): return false
+	if isTileEmpty(pos) or world[pos].aboutToDie: return false
 	return world[pos].isConnected(dir)
 
 

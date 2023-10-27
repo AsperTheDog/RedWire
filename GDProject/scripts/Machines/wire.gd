@@ -26,9 +26,14 @@ var wireLayout: Dictionary = {
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
+	world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
+	world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
+	world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
+	world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
 
 
 func die():
+	super.die()
 	world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
 	world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
 	world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)

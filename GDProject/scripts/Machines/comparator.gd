@@ -13,6 +13,7 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 
 
 func die():
+	super.die()
 	world.requestUpdate(pos + Vector2i.UP, Machine.Dir.DOWN)
 	world.requestUpdate(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
 	world.requestUpdate(pos + Vector2i.DOWN, Machine.Dir.UP)

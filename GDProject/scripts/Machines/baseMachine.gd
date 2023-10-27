@@ -28,7 +28,8 @@ var dirVectors := {
 var pos: Vector2i
 var world: World
 var rot: Dir
-var power: int = -1
+var power: int = 0
+var aboutToDie: bool = false
 
 
 func _init(world: World, pos: Vector2i, rot: Dir):
@@ -38,7 +39,7 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 
 
 func die():
-	pass
+	aboutToDie = true
 
 
 func isEqual(other: Machine) -> bool:

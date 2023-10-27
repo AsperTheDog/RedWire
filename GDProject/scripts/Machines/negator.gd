@@ -4,13 +4,12 @@ class_name Negator
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
-	power = 0
 	world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
 	world.requestUpdate(pos - dirVectors[rot], rot)
 
 
 func die():
-	pass
+	super.die()
 
 
 func update():
