@@ -24,32 +24,7 @@ enum Layer {
 }
 
 
-class UpdateAction:
-	var tick: int
-	var pos: Vector2i
-	var objectType: MachineType
-	var fromSelf: bool
-	
-	func _init(tick: int, pos: Vector2i, type: MachineType, fromSelf: bool):
-		self.tick = tick
-		self.pos = pos
-		objectType = type
-		self.fromSelf = fromSelf
-
-
-class TileInfo:
-	var atlas: int = -1
-	var coords: Vector2i = Vector2i.ZERO
-	var altID: int = -1
-	
-	func _init(atlas: int = -1, coords: Vector2i = Vector2i.ZERO, altID: int = -1):
-		self.atlas = atlas
-		self.coords = coords
-		self.altID = altID
-
-
 @onready var world: Dictionary
-var tick: int = 0
 
 var machines: Dictionary = {
 	MachineType.WIRE: Wire,
@@ -71,7 +46,6 @@ var forcedDelays: Dictionary = {
 	MachineType.FLICKER: 0,
 	MachineType.SLOGGER: 0
 }
-var pendingActions: Array[UpdateAction] = []
 
 var dragging: bool = false
 
@@ -90,22 +64,6 @@ func _process(delta: float) -> void:
 			world[lastMousePos].interact()
 	if Input.is_action_just_pressed("rotate"):
 		Save.placingRotation = (Save.placingRotation + 1) % Machine.Dir.ANY
-
-
-func _physics_process(delta: float) -> void:
-	var count = 0
-	while count < pendingActions.size():
-		var action: UpdateAction = pendingActions[count]
-		if action.tick == tick:
-			if action.pos in world and world[action.pos].getType() == action.objectType:
-				world[action.pos].update(action.fromSelf)
-			pendingActions.remove_at(count)
-			count -= 1
-		count += 1
-	if pendingActions.size() > 0:
-		tick += 1
-	else:
-		tick = 0
 
 
 func updateWireColor(color: Color):
@@ -127,7 +85,7 @@ func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
 		updateTextures(Layer.ALL, pos)
 		return
 	world[pos] = machines[type].new(self, pos, rot)
-	world[pos].update(true)
+	world[pos].update()
 	updateTextures(Layer.ALL, pos)
 
 
@@ -142,11 +100,7 @@ func updateTextures(layer: Layer, pos: Vector2i):
 	if pos not in world:
 		erase_cell(layer, pos)
 	else:
-		var cellData: TileInfo = world[pos].getTileAtLayer(layer)
-		if cellData == null: 
-			erase_cell(layer, pos)
-			return
-		set_cell(layer, pos, cellData.atlas, cellData.coords, cellData.altID)
+		world[pos].updateTileAtLayer(layer)
 
 
 func placeOverlay(pos: Vector2i):
@@ -157,11 +111,13 @@ func removeOverlay(pos: Vector2i):
 	erase_cell(Layer.OVERLAY as int, pos)
 
 
-func requestUpdate(delay: int, pos: Vector2i, dir: Machine.Dir):
+func requestUpdate(pos: Vector2i, dir: Machine.Dir, delay: int = 0):
 	if pos not in world or not world[pos].isConnected(dir): return
-	delay = max(delay, forcedDelays[world[pos].getType()])
-	var update := UpdateAction.new(tick + delay, pos, world[pos].getType(), dir == Machine.Dir.ANY)
-	pendingActions.append(update)
+	var count := 0
+	while count < delay:
+		await get_tree().physics_frame
+		count += 1
+	world[pos].update()
 
 
 func getTileAt(pos: Vector2i):

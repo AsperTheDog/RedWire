@@ -29,28 +29,28 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 
 
 func die():
-	world.requestUpdate(0, pos + Vector2i.UP, Dir.DOWN)
-	world.requestUpdate(0, pos + Vector2i.DOWN, Dir.UP)
-	world.requestUpdate(0, pos + Vector2i.LEFT, Dir.RIGHT)
-	world.requestUpdate(0, pos + Vector2i.RIGHT, Dir.LEFT)
+	world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
+	world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
+	world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
+	world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
 
 
 func isEqual(other: Machine) -> bool:
 	return other.getType() == getType() and other.pos == pos
 
 
-func update(fromSelf: bool):
+func update():
 	var neighPow := 0
 	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.UP, Dir.DOWN) - 1)
 	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.DOWN, Dir.UP) - 1)
 	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.RIGHT, Dir.LEFT) - 1)
 	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.LEFT, Dir.RIGHT) - 1)
 	if power != neighPow:
-		world.requestUpdate(0, pos + Vector2i.UP, Dir.DOWN)
-		world.requestUpdate(0, pos + Vector2i.DOWN, Dir.UP)
-		world.requestUpdate(0, pos + Vector2i.LEFT, Dir.RIGHT)
-		world.requestUpdate(0, pos + Vector2i.RIGHT, Dir.LEFT)
-	power = neighPow
+		power = neighPow
+		world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
+		world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
+		world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
+		world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
 	world.updateTextures(World.Layer.REDSTONE1, pos)
 
 
@@ -66,19 +66,15 @@ func getType() -> World.MachineType:
 	return World.MachineType.WIRE
 
 
-func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
-	if layer != World.Layer.REDSTONE1: return null
-	var tile: World.TileInfo = World.TileInfo.new()
+func updateTileAtLayer(layer: World.Layer):
+	if layer != World.Layer.REDSTONE1: return
 	var connUp = world.isConnectedAt(pos + Vector2i.UP, Machine.Dir.DOWN)
 	var connRight = world.isConnectedAt(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
 	var connDown = world.isConnectedAt(pos + Vector2i.DOWN, Machine.Dir.UP)
 	var connLeft = world.isConnectedAt(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
 	var code := (int(connLeft) + (int(connDown) << 1) + (int(connRight) << 2) + (int(connUp) << 3))
 	var tilePos = wireLayout[code]
-	tile.atlas = 2
-	tile.coords = Vector2i(tilePos.x, tilePos.y)
-	tile.altID = tilePos.z + 15 - power
-	return tile
+	world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - power)
 
 
 func isConnected(dir: Dir) -> bool:

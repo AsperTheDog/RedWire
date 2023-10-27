@@ -9,23 +9,24 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 
 
 func die():
-	world.requestUpdate(0, pos + Vector2i.UP, Machine.Dir.DOWN)
-	world.requestUpdate(0, pos + Vector2i.RIGHT, Machine.Dir.LEFT)
-	world.requestUpdate(0, pos + Vector2i.DOWN, Machine.Dir.UP)
-	world.requestUpdate(0, pos + Vector2i.LEFT, Machine.Dir.RIGHT)
+	world.requestUpdate(pos + Vector2i.UP, Machine.Dir.DOWN)
+	world.requestUpdate(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
+	world.requestUpdate(pos + Vector2i.DOWN, Machine.Dir.UP)
+	world.requestUpdate(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
 
 
 func isEqual(other: Machine) -> bool:
 	return super.isEqual(other) and other.activated == activated
 
 
-func update(fromSelf: bool):
-	if not fromSelf: return
-	power = 15 if activated else 0
-	world.requestUpdate(0, pos + Vector2i.UP, Machine.Dir.DOWN)
-	world.requestUpdate(0, pos + Vector2i.RIGHT, Machine.Dir.LEFT)
-	world.requestUpdate(0, pos + Vector2i.DOWN, Machine.Dir.UP)
-	world.requestUpdate(0, pos + Vector2i.LEFT, Machine.Dir.RIGHT)
+func update():
+	var newPow = 15 if activated else 0
+	if newPow == power: return
+	power = newPow
+	world.requestUpdate(pos + Vector2i.UP, Machine.Dir.DOWN)
+	world.requestUpdate(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
+	world.requestUpdate(pos + Vector2i.DOWN, Machine.Dir.UP)
+	world.requestUpdate(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
 	world.updateTextures(World.Layer.ALL, pos)
 
 
@@ -35,20 +36,19 @@ func getPower(dir: Dir):
 
 func interact():
 	activated = not activated
-	update(true)
+	update()
 
 
 func getType() -> World.MachineType:
 	return World.MachineType.GENERATOR
 
 
-func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			return World.TileInfo.new(1, Vector2i(1 if activated else 0, 3), 0)
+			world.set_cell(layer, pos, 1, Vector2i(1 if activated else 0, 3), 0)
 		World.Layer.REDSTONE1:
-			return World.TileInfo.new(3, Vector2i(0, 3), 0 + 15 - power)
-	return null
+			world.set_cell(layer, pos, 3, Vector2i(0, 3), 0 + 15 - power)
 
 
 func isConnected(dir: Dir) -> bool:

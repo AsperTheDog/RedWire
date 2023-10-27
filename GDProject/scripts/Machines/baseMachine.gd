@@ -45,7 +45,7 @@ func isEqual(other: Machine) -> bool:
 	return other.getType() == getType() and other.pos == pos and other.rot == rot
 
 
-func update(fromSelf: bool):
+func update():
 	pass
 
 
@@ -61,8 +61,8 @@ func getType() -> World.MachineType:
 	return World.MachineType.NONE
 
 
-func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
-	return World.TileInfo.new()
+func updateTileAtLayer(layer: World.Layer):
+	pass
 
 
 func isConnected(dir: Dir) -> bool:

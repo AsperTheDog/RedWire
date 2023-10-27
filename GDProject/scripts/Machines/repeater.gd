@@ -10,41 +10,59 @@ var tickInit: int = 0
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 	power = 0
-	world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
-	world.requestUpdate(0, pos - dirVectors[rot], rot)
+	world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
+	world.requestUpdate(pos - dirVectors[rot], rot)
 
 
 func die():
-	world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
-	world.requestUpdate(0, pos - dirVectors[rot], rot)
+	world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
+	world.requestUpdate(pos - dirVectors[rot], rot)
 
 
 func isEqual(other: Machine) -> bool:
 	return super.isEqual(other) and other.ticks == ticks
 
 
-func update(fromSelf: bool):
-	if not fromSelf and processing and world.tick != tickInit: return
-	if not processing or world.tick == tickInit:
+func update():
+	
+	if not processing:
 		var source = world.getPowerAt(pos - dirVectors[rot], rot)
 		if (0 if source == 0 else 15) == bufferPower: 
 			world.updateTextures(World.Layer.REDSTONE2, pos)
 			return
-		bufferPower = 0 if source == 0 else 15
-		if world.tick == tickInit and processing: return
-		world.requestUpdate(1, pos, Machine.Dir.ANY)
-		world.updateTextures(World.Layer.REDSTONE2, pos)
-		tickInit = world.tick
 		processing = true
-	else:
-		if tickInit + ticks > world.tick: 
-			world.requestUpdate(1, pos, Machine.Dir.ANY)
-			return
-		power = bufferPower
+		bufferPower = 0 if source == 0 else 15
+		world.updateTextures(World.Layer.REDSTONE2, pos)
+		var count := 0
+		while count < ticks:
+			await world.get_tree().physics_frame
+			count += 1
 		processing = false
-		world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
-		world.requestUpdate(1, pos, Machine.Dir.ANY)
+		power = bufferPower
+		world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
 		world.updateTextures(World.Layer.REDSTONE1, pos)
+		world.requestUpdate(pos, Machine.Dir.ANY, 1)
+#	if not fromSelf and processing and world.tick != tickInit: return
+#	if not processing or world.tick == tickInit:
+#		var source = world.getPowerAt(pos - dirVectors[rot], rot)
+#		if (0 if source == 0 else 15) == bufferPower: 
+#			world.updateTextures(World.Layer.REDSTONE2, pos)
+#			return
+#		bufferPower = 0 if source == 0 else 15
+#		if world.tick == tickInit and processing: return
+#		world.updateTextures(World.Layer.REDSTONE2, pos)
+#		tickInit = world.tick
+#		processing = true
+#		world.requestUpdate(pos, Machine.Dir.ANY, 1)
+#	else:
+#		if tickInit + ticks > world.tick: 
+#			world.requestUpdate(pos, Machine.Dir.ANY, 1)
+#			return
+#		power = bufferPower
+#		processing = false
+#		world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
+#		world.updateTextures(World.Layer.REDSTONE1, pos)
+#		world.requestUpdate(pos, Machine.Dir.ANY, 1)
 
 
 func getPower(dir: Dir):
@@ -61,15 +79,14 @@ func getType() -> World.MachineType:
 	return World.MachineType.REPEATER
 
 
-func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
+func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			return World.TileInfo.new(1, Vector2i(ticks - 1, 0), rot)
+			world.set_cell(layer, pos, 1, Vector2i(ticks - 1, 0), rot)
 		World.Layer.REDSTONE1:
-			return World.TileInfo.new(3, Vector2i(0, 0), rot * 16 + 15 - power)
+			world.set_cell(layer, pos, 3, Vector2i(0, 0), rot * 16 + 15 - power)
 		World.Layer.REDSTONE2:
-			return World.TileInfo.new(3, Vector2i(1, 0), rot * 16 + 15 - bufferPower)
-	return null
+			world.set_cell(layer, pos, 3, Vector2i(1, 0), rot * 16 + 15 - bufferPower)
 
 
 func isConnected(dir: Dir) -> bool:
