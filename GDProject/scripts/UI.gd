@@ -11,7 +11,10 @@ var currentDragMachine: World.MachineType:
 	World.MachineType.REPEATER: $UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin/TileTex,
 	World.MachineType.COMPARATOR: $UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin/TileTex,
 	World.MachineType.NEGATOR: $UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin/TileTex,
-	World.MachineType.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex
+	World.MachineType.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex,
+	World.MachineType.CROSSING: $UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin/TileTex,
+	World.MachineType.FLICKER: $UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin/TileTex,
+	World.MachineType.SLOGGER: $UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin/TileTex
 }
 
 

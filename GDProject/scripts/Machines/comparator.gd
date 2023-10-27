@@ -12,8 +12,8 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	world.requestUpdate(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
 	world.requestUpdate(pos + Vector2i.DOWN, Machine.Dir.UP)
 	world.requestUpdate(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
-	right = (rot + 1) % Machine.Dir.ANY
-	left = (rot + 3) % Machine.Dir.ANY
+	right = (rot + Dir.RIGHT) % Machine.Dir.ANY
+	left = (rot + Dir.LEFT) % Machine.Dir.ANY
 
 
 func die():

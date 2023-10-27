@@ -97,7 +97,10 @@ machines = [
     Tile("1:1", []),
     Tile("0:2", []),
     Tile("0:3", []),
-    Tile("1:3", [])
+    Tile("1:3", []),
+    Tile("0:4", []),
+    Tile("0:5", []),
+    Tile("0:6", []),
             ]
 
 machineWirePrefix = """[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0jiu0"]\nresource_name = "RedstoneObjs"\ntexture = ExtResource("3_01bpq")"""
@@ -111,7 +114,13 @@ machineWires = [
     Tile("0:2", colorGradient),
     Tile("1:2", colorGradient),
     Tile("0:3", colorGradient),
-    Tile("0:4", [])
+    Tile("0:4", colorGradient),
+    Tile("1:4", colorGradient),
+    Tile("0:5", colorGradient),
+    Tile("1:5", colorGradient),
+    Tile("0:6", colorGradient),
+    Tile("1:6", colorGradient),
+    Tile("0:7", [])
 ]
 
 total = "".join([entry.output for entry in machines + wires + machineWires])

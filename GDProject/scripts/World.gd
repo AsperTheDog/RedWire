@@ -32,7 +32,7 @@ var machines: Dictionary = {
 	MachineType.COMPARATOR: Comparator,
 	MachineType.NEGATOR: Negator,
 	MachineType.GENERATOR: Generator,
-	MachineType.CROSSING: null,
+	MachineType.CROSSING: Crossroad,
 	MachineType.FLICKER: null,
 	MachineType.SLOGGER: null
 }

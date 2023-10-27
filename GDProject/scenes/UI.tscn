@@ -1,8 +1,8 @@
-[gd_scene load_steps=23 format=3 uid="uid://diurl1x0378ds"]
+[gd_scene load_steps=40 format=3 uid="uid://diurl1x0378ds"]
 
 [ext_resource type="Texture2D" uid="uid://dc4nb2tg21enf" path="res://tiles/tileset_0001_Layer-31.png" id="1_k8vjh"]
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_vtre6"]
-[ext_resource type="Texture2D" uid="uid://dowi4vb566ya2" path="res://tiles/tileset_0000_Layer-32.png" id="2_a5jli"]
+[ext_resource type="Texture2D" uid="uid://d4eu5s6t8h4wd" path="res://tiles/tileset_0000_Layer-33.png" id="3_kfppp"]
 [ext_resource type="Texture2D" uid="uid://r0qc53ovoj8k" path="res://tiles/tileset_0002_Layer-29.png" id="3_qsvmw"]
 [ext_resource type="Texture2D" uid="uid://5xr080c15va5" path="res://erase.svg" id="5_fxb56"]
 
@@ -11,8 +11,8 @@ atlas = ExtResource("1_k8vjh")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1085"]
-atlas = ExtResource("2_a5jli")
-region = Rect2(32, 0, 16, 16)
+atlas = ExtResource("3_kfppp")
+region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5sql3"]
 atlas = ExtResource("3_qsvmw")
@@ -23,7 +23,7 @@ atlas = ExtResource("3_qsvmw")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5olb6"]
-atlas = ExtResource("2_a5jli")
+atlas = ExtResource("3_kfppp")
 region = Rect2(16, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1mu6u"]
@@ -39,7 +39,7 @@ atlas = ExtResource("3_qsvmw")
 region = Rect2(48, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tue8e"]
-atlas = ExtResource("2_a5jli")
+atlas = ExtResource("3_kfppp")
 region = Rect2(0, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qahgj"]
@@ -50,13 +50,73 @@ region = Rect2(0, 32, 16, 16)
 atlas = ExtResource("3_qsvmw")
 region = Rect2(16, 32, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2gbl6"]
-atlas = ExtResource("2_a5jli")
+[sub_resource type="AtlasTexture" id="AtlasTexture_io83l"]
+atlas = ExtResource("3_kfppp")
 region = Rect2(16, 48, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2os4f"]
 atlas = ExtResource("3_qsvmw")
 region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2gbl6"]
+atlas = ExtResource("3_kfppp")
+region = Rect2(0, 64, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qdwv4"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plfyv"]
+atlas = SubResource("CompressedTexture2D_qdwv4")
+region = Rect2(0, 64, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kohgc"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cugo"]
+atlas = SubResource("CompressedTexture2D_kohgc")
+region = Rect2(16, 64, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wlwxl"]
+load_path = "res://.godot/imported/tileset_0000_Layer-33.png-a54648832f516c0411d21cafc0fd60af.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67mub"]
+atlas = SubResource("CompressedTexture2D_wlwxl")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_l0o78"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_txx15"]
+atlas = SubResource("CompressedTexture2D_l0o78")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sl0ao"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qrmmt"]
+atlas = SubResource("CompressedTexture2D_sl0ao")
+region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_umu6t"]
+load_path = "res://.godot/imported/tileset_0000_Layer-33.png-a54648832f516c0411d21cafc0fd60af.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7h6q"]
+atlas = SubResource("CompressedTexture2D_umu6t")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_yohfx"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex3db"]
+atlas = SubResource("CompressedTexture2D_yohfx")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_a5y8g"]
+load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0d2d"]
+atlas = SubResource("CompressedTexture2D_a5y8g")
+region = Rect2(16, 96, 16, 16)
 
 [sub_resource type="Gradient" id="Gradient_ww03v"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
@@ -335,7 +395,7 @@ theme_override_constants/margin_bottom = 10
 texture_filter = 1
 layout_mode = 2
 action_mode = 0
-texture_normal = SubResource("AtlasTexture_2gbl6")
+texture_normal = SubResource("AtlasTexture_io83l")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -353,6 +413,159 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0.145098)
 
 [node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Generator/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Crossroad" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_2gbl6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_plfyv")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_5cugo")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Flicker" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Flicker"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_67mub")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_txx15")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_qrmmt")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Slogger" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Slogger"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_o7h6q")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_ex3db")
+expand_mode = 5
+
+[node name="TileTex3" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_l0d2d")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG"]
 visible = false
 layout_mode = 2
 mouse_filter = 2
