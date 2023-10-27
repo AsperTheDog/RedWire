@@ -4,12 +4,16 @@ class_name Comparator
 var substractMode: bool = false
 
 
+var right: int
+var left: int
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 	world.requestUpdate(pos + Vector2i.UP, Machine.Dir.DOWN)
 	world.requestUpdate(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
 	world.requestUpdate(pos + Vector2i.DOWN, Machine.Dir.UP)
 	world.requestUpdate(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
+	right = (rot + 1) % Machine.Dir.ANY
+	left = (rot + 3) % Machine.Dir.ANY
 
 
 func die():
@@ -30,9 +34,7 @@ func update():
 	awaiting = true
 	await world.get_tree().physics_frame
 	awaiting = false
-	var right := (rot + 1) % Machine.Dir.ANY
 	var powerRight := world.getPowerAt(pos + dirVectors[right], opposeDir[right])
-	var left := (rot + 3) % Machine.Dir.ANY
 	var powerLeft := world.getPowerAt(pos + dirVectors[left], opposeDir[left])
 	var input := world.getPowerAt(pos - dirVectors[rot], rot)
 	if substractMode:
@@ -67,11 +69,9 @@ func updateTileAtLayer(layer: World.Layer):
 		World.Layer.REDSTONE2:
 			world.set_cell(layer, pos, 3, Vector2i(1, 1), rot * 16 + 15 - power)
 		World.Layer.REDSTONE3:
-			var right := (rot + 1) % Machine.Dir.ANY
 			var powerRight := world.getPowerAt(pos + dirVectors[right], opposeDir[right])
 			world.set_cell(layer, pos, 3, Vector2i(2, 1), opposeDir[rot] * 16 + 15 - powerRight)
 		World.Layer.REDSTONE4:
-			var left := (rot + 3) % Machine.Dir.ANY
 			var powerLeft := world.getPowerAt(pos + dirVectors[left], opposeDir[left])
 			world.set_cell(layer, pos, 3, Vector2i(2, 1), rot * 16 + 15 - powerLeft)
 

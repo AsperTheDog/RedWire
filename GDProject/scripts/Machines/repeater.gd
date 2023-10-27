@@ -42,27 +42,6 @@ func update():
 		world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
 		world.updateTextures(World.Layer.REDSTONE1, pos)
 		world.requestUpdate(pos, Machine.Dir.ANY, 1)
-#	if not fromSelf and processing and world.tick != tickInit: return
-#	if not processing or world.tick == tickInit:
-#		var source = world.getPowerAt(pos - dirVectors[rot], rot)
-#		if (0 if source == 0 else 15) == bufferPower: 
-#			world.updateTextures(World.Layer.REDSTONE2, pos)
-#			return
-#		bufferPower = 0 if source == 0 else 15
-#		if world.tick == tickInit and processing: return
-#		world.updateTextures(World.Layer.REDSTONE2, pos)
-#		tickInit = world.tick
-#		processing = true
-#		world.requestUpdate(pos, Machine.Dir.ANY, 1)
-#	else:
-#		if tickInit + ticks > world.tick: 
-#			world.requestUpdate(pos, Machine.Dir.ANY, 1)
-#			return
-#		power = bufferPower
-#		processing = false
-#		world.requestUpdate(pos + dirVectors[rot], opposeDir[rot])
-#		world.updateTextures(World.Layer.REDSTONE1, pos)
-#		world.requestUpdate(pos, Machine.Dir.ANY, 1)
 
 
 func getPower(dir: Dir):
@@ -90,9 +69,10 @@ func updateTileAtLayer(layer: World.Layer):
 
 
 func isConnected(dir: Dir) -> bool:
-	if dir == Machine.Dir.ANY: return true
 	if dir == Machine.Dir.UP or dir == Machine.Dir.DOWN:
 		return rot == Machine.Dir.DOWN or rot == Machine.Dir.UP
 	if dir == Machine.Dir.RIGHT or dir == Machine.Dir.LEFT:
 		return rot == Machine.Dir.LEFT or rot == Machine.Dir.RIGHT
+	if dir == Machine.Dir.ANY: 
+		return true
 	return false
