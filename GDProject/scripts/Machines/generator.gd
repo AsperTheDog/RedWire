@@ -8,6 +8,13 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 
 
+func die():
+	world.requestUpdate(0, pos + Vector2i.UP, Machine.Dir.DOWN)
+	world.requestUpdate(0, pos + Vector2i.RIGHT, Machine.Dir.LEFT)
+	world.requestUpdate(0, pos + Vector2i.DOWN, Machine.Dir.UP)
+	world.requestUpdate(0, pos + Vector2i.LEFT, Machine.Dir.RIGHT)
+
+
 func isEqual(other: Machine) -> bool:
 	return super.isEqual(other) and other.activated == activated
 

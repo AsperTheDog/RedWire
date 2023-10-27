@@ -14,16 +14,24 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	world.requestUpdate(0, pos - dirVectors[rot], rot)
 
 
+func die():
+	world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
+	world.requestUpdate(0, pos - dirVectors[rot], rot)
+
+
 func isEqual(other: Machine) -> bool:
 	return super.isEqual(other) and other.ticks == ticks
 
 
 func update(fromSelf: bool):
-	if not fromSelf and processing: return
-	if not processing:
+	if not fromSelf and processing and world.tick != tickInit: return
+	if not processing or world.tick == tickInit:
 		var source = world.getPowerAt(pos - dirVectors[rot], rot)
-		if (0 if source == 0 else 15) == bufferPower: return
+		if (0 if source == 0 else 15) == bufferPower: 
+			world.updateTextures(World.Layer.REDSTONE2, pos)
+			return
 		bufferPower = 0 if source == 0 else 15
+		if world.tick == tickInit and processing: return
 		world.requestUpdate(1, pos, Machine.Dir.ANY)
 		world.updateTextures(World.Layer.REDSTONE2, pos)
 		tickInit = world.tick

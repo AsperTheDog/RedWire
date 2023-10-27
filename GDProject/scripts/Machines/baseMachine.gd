@@ -37,6 +37,10 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	self.rot = rot
 
 
+func die():
+	pass
+
+
 func isEqual(other: Machine) -> bool:
 	return other.getType() == getType() and other.pos == pos and other.rot == rot
 

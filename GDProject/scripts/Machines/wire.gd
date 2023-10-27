@@ -28,6 +28,13 @@ func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
 
 
+func die():
+	world.requestUpdate(0, pos + Vector2i.UP, Dir.DOWN)
+	world.requestUpdate(0, pos + Vector2i.DOWN, Dir.UP)
+	world.requestUpdate(0, pos + Vector2i.LEFT, Dir.RIGHT)
+	world.requestUpdate(0, pos + Vector2i.RIGHT, Dir.LEFT)
+
+
 func isEqual(other: Machine) -> bool:
 	return other.getType() == getType() and other.pos == pos
 

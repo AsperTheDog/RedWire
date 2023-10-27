@@ -36,9 +36,11 @@ func _ready() -> void:
 
 
 func _process(delta: float):
-	
 	if Input.is_action_just_pressed("drawer"):
 		toggleDrawer()
+	if Input.is_action_just_pressed("erase"):
+		var butt: TextureButton = $UILayer/Control/MarginContainer/HBoxContainer/TextureRect/eraser
+		butt.button_pressed = not butt.button_pressed
 
 
 func updatePressedButton(pressed: World.MachineType):
@@ -83,3 +85,7 @@ func TPSChanged(newTPS: String):
 	var tps: int = newTPS.to_int()
 	if tps <= 0: return
 	Save.tps = tps
+
+
+func eraserToggled(active: bool) -> void:
+	Save.eraserActive = active

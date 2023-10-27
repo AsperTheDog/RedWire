@@ -4,6 +4,7 @@ signal bgChanged(color: Color)
 signal wireChanged(color: Color)
 signal overwriteChanged(overwrite: bool)
 signal rotationChanged(rotation: Machine.Dir)
+signal eraserToggled(active: bool)
 
 var bgColor: Color = Color.DARK_BLUE:
 	set(value):
@@ -30,3 +31,8 @@ var tps: int = 10:
 	set(value):
 		tps = value
 		Engine.physics_ticks_per_second = tps
+
+var eraserActive: bool:
+	set(value):
+		eraserActive = value
+		eraserToggled.emit(value)

@@ -18,12 +18,7 @@ enum Layer {
 	REDSTONE1,
 	REDSTONE2,
 	REDSTONE3,
-	VALVE,
-	PH_MACHINE,
-	PH_REDSTONE1,
-	PH_REDSTONE2,
-	PH_REDSTONE3,
-	PH_VALVE,
+	REDSTONE4,
 	OVERLAY,
 	ALL
 }
@@ -66,6 +61,16 @@ var machines: Dictionary = {
 	MachineType.FLICKER: null,
 	MachineType.SLOGGER: null
 }
+var forcedDelays: Dictionary = {
+	MachineType.WIRE: 0,
+	MachineType.REPEATER: 0,
+	MachineType.COMPARATOR: 1,
+	MachineType.NEGATOR: 1,
+	MachineType.GENERATOR: 0,
+	MachineType.CROSSING: 0,
+	MachineType.FLICKER: 0,
+	MachineType.SLOGGER: 0
+}
 var pendingActions: Array[UpdateAction] = []
 
 var dragging: bool = false
@@ -73,6 +78,7 @@ var dragging: bool = false
 
 func _ready():
 	Save.wireChanged.connect(updateWireColor)
+	Save.eraserToggled.connect(onEraserToggle)
 	updateWireColor(Save.wireColor)
 
 
@@ -96,17 +102,27 @@ func _physics_process(delta: float) -> void:
 			pendingActions.remove_at(count)
 			count -= 1
 		count += 1
-	tick += 1
+	if pendingActions.size() > 0:
+		tick += 1
+	else:
+		tick = 0
 
 
 func updateWireColor(color: Color):
 	set_layer_modulate(Layer.REDSTONE1, color)
 	set_layer_modulate(Layer.REDSTONE2, color)
 	set_layer_modulate(Layer.REDSTONE3, color)
+	set_layer_modulate(Layer.REDSTONE4, color)
+
+
+func onEraserToggle(active: bool):
+	set_layer_modulate(Layer.OVERLAY, Color(1.0, 0.5, 0.5, 0.35) if active else Color(1.0, 1.0, 1.0, 0.35))
 
 
 func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
 	if type == MachineType.NONE or machines[type] == null:
+		if pos in world:
+			world[pos].die()
 		world.erase(pos)
 		updateTextures(Layer.ALL, pos)
 		return
@@ -121,7 +137,7 @@ func updateTextures(layer: Layer, pos: Vector2i):
 		updateTextures(Layer.REDSTONE1, pos)
 		updateTextures(Layer.REDSTONE2, pos)
 		updateTextures(Layer.REDSTONE3, pos)
-		updateTextures(Layer.VALVE, pos)
+		updateTextures(Layer.REDSTONE4, pos)
 		return
 	if pos not in world:
 		erase_cell(layer, pos)
@@ -131,28 +147,6 @@ func updateTextures(layer: Layer, pos: Vector2i):
 			erase_cell(layer, pos)
 			return
 		set_cell(layer, pos, cellData.atlas, cellData.coords, cellData.altID)
-
-
-func addPhantomAtPos(pos: Vector2i, type: MachineType, rot: Machine.Dir):
-	if type == MachineType.NONE or machines[type] == null: return
-	var pMachine: TileInfo = machines[type].getPhantomTileAtPos(self, Layer.MACHINE, pos, rot)
-	set_cell(Layer.PH_MACHINE as int, pos, pMachine.atlas, pMachine.coords, pMachine.altID)
-	var pRedstone1: TileInfo = machines[type].getPhantomTileAtPos(self, Layer.REDSTONE1, pos, rot)
-	set_cell(Layer.PH_REDSTONE1 as int, pos, pRedstone1.atlas, pRedstone1.coords, pRedstone1.altID)
-	var pRedstone2: TileInfo = machines[type].getPhantomTileAtPos(self, Layer.REDSTONE2, pos, rot)
-	set_cell(Layer.PH_REDSTONE2 as int, pos, pRedstone2.atlas, pRedstone2.coords, pRedstone2.altID)
-	var pRedstone3: TileInfo = machines[type].getPhantomTileAtPos(self, Layer.REDSTONE3, pos, rot)
-	set_cell(Layer.PH_REDSTONE3 as int, pos, pRedstone3.atlas, pRedstone3.coords, pRedstone3.altID)
-	var pValve: TileInfo = machines[type].getPhantomTileAtPos(self, Layer.VALVE, pos, rot)
-	set_cell(Layer.PH_VALVE as int, pos, pValve.atlas, pValve.coords, pValve.altID)
-
-
-func removePhantomAtPos(pos: Vector2i):
-	erase_cell(Layer.PH_MACHINE as int, pos)
-	erase_cell(Layer.PH_REDSTONE1 as int, pos)
-	erase_cell(Layer.PH_REDSTONE2 as int, pos)
-	erase_cell(Layer.PH_REDSTONE3 as int, pos)
-	erase_cell(Layer.PH_VALVE as int, pos)
 
 
 func placeOverlay(pos: Vector2i):
@@ -165,6 +159,7 @@ func removeOverlay(pos: Vector2i):
 
 func requestUpdate(delay: int, pos: Vector2i, dir: Machine.Dir):
 	if pos not in world or not world[pos].isConnected(dir): return
+	delay = max(delay, forcedDelays[world[pos].getType()])
 	var update := UpdateAction.new(tick + delay, pos, world[pos].getType(), dir == Machine.Dir.ANY)
 	pendingActions.append(update)
 
@@ -189,10 +184,12 @@ func isConnectedAt(pos: Vector2i, dir: Machine.Dir) -> bool:
 
 
 func updateDragging():
-	var tilePos: Vector2i = lastMousePos
-	if not isTileEmpty(tilePos) and not Save.doOverwrite:
+	if Save.eraserActive:
+		placeMachine(MachineType.NONE, lastMousePos, Machine.Dir.ANY)
 		return
-	placeMachine(Save.selectedMachine, tilePos, Save.placingRotation)
+	if not isTileEmpty(lastMousePos) and not Save.doOverwrite:
+		return
+	placeMachine(Save.selectedMachine, lastMousePos, Save.placingRotation)
 
 
 var lastMousePos: Vector2i = Vector2i.ZERO

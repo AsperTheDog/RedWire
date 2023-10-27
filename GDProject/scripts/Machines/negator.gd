@@ -4,14 +4,28 @@ class_name Negator
 
 func _init(world: World, pos: Vector2i, rot: Dir):
 	super._init(world, pos, rot)
+	power = 0
+	world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
+	world.requestUpdate(0, pos - dirVectors[rot], rot)
+
+
+func die():
+	pass
 
 
 func update(fromSelf: bool):
-	pass
+	var input := world.getPowerAt(pos - dirVectors[rot], rot)
+	var newPow = 0 if input > 0 else 15
+	if newPow != power:
+		power = newPow
+		world.requestUpdate(0, pos + dirVectors[rot], opposeDir[rot])
+		world.updateTextures(World.Layer.REDSTONE1, pos)
+		world.updateTextures(World.Layer.REDSTONE2, pos)
 
 
 func getPower(dir: Dir):
-	pass
+	if dir != rot: return 0
+	return power
 
 
 func interact():
@@ -23,7 +37,14 @@ func getType() -> World.MachineType:
 
 
 func getTileAtLayer(layer: World.Layer) -> World.TileInfo:
-	return World.TileInfo.new()
+	match layer:
+		World.Layer.MACHINE:
+			return World.TileInfo.new(1, Vector2i(0, 2), rot)
+		World.Layer.REDSTONE1:
+			return World.TileInfo.new(3, Vector2i(0, 2), rot * 16 + 15 - power)
+		World.Layer.REDSTONE2:
+			return World.TileInfo.new(3, Vector2i(1, 2), rot * 16 + 15 - (0 if power > 0 else 15))
+	return null
 
 
 func isConnected(dir: Dir) -> bool:
