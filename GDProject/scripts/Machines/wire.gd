@@ -22,6 +22,9 @@ var wireLayout: Dictionary = {
 	0b1111: Vector3i(0, 0, 0)
 }
 
+var power: int = 0
+var maxInput: int = 0
+
 
 func _init(pos: Vector2i, rot: int) -> void:
 	self.pos = pos
@@ -56,18 +59,22 @@ func updateTileAtLayer(layer: World.Layer):
 		var conn = Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side])
 		if conn: code += 1 << side
 	var tilePos = wireLayout[code]
-	var power = getPowerInput()
 	Game.world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - power)
 
 
-func getPowerInput() -> int:
-	var maxPower := 0
+func calculatePowerInput():
+	power = 0
 	for input in self.inputs.size():
-		maxPower = max(maxPower, inputs[input].power)
-	return maxPower
+		if inputs[input].power > power:
+			power = inputs[input].power
+			maxInput = input
 
 
 func onPowerUpdate(id :int):
+	if maxInput != id and inputs[id].power <= power: return
+	var prevPower = power
+	calculatePowerInput()
+	if prevPower == power: return
 	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
 
 
