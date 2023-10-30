@@ -24,7 +24,7 @@ var activated: bool = false:
 func _init(pos: Vector2i, rot: int):
 	self.pos = pos
 	self.rot = rot
-	regenConnections()
+	requestRegen()
 
 
 func die():
@@ -32,7 +32,15 @@ func die():
 
 
 func getType() -> Type:
-	return Type.GENERATOR
+	return Type.NONE
+
+
+func isEqual(other: Component):
+	return other.getType() == getType() and other.pos == pos and other.activated == activated
+
+
+func isEqualToNew():
+	return not activated
 
 
 func isConnectedAt(dir: int) -> bool:
@@ -55,7 +63,15 @@ func onNeighborChanged(dir: int):
 	regenConnections()
 
 
+var requested: bool = false
+func requestRegen():
+	if requested: return
+	requested = true
+	regenConnections.call_deferred()
+
+
 func regenConnections():
+	requested = false
 	resetting.emit(self)
 	var exploredNodes: Array[Vector2i] = []
 	var nodesToExplore: Array[CircuitNode] = []

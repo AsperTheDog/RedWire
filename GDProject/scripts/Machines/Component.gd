@@ -22,6 +22,7 @@ class Connection:
 
 	var power: int = 0
 	var sources: Dictionary = {}
+			
 	var maxSource: Component = null
 	
 	func resetSources() -> void:
@@ -29,32 +30,43 @@ class Connection:
 			source.update.disconnect(sourceUpdate)
 			source.resetting.disconnect(deleteSource)
 		sources.clear()
+		recalculatePower()
 
 	func deleteSource(source: Component) -> void:
 		if source not in sources: return
 		source.update.disconnect(sourceUpdate)
 		source.resetting.disconnect(deleteSource)
 		sources.erase(source)
+		recalculatePower()
 
 	func registerSource(source: Component, distance: int, currentPow: int) -> void:
 		if source not in sources:
 			source.update.connect(sourceUpdate)
 			source.resetting.connect(deleteSource)
 		elif sources[source].x <= distance: return
-		sources[source] = Vector2i(distance, currentPow)
+		sources[source] = Vector2i(distance, max(0, currentPow - distance))
+		recalculatePower()
 	
 	func sourceUpdate(source: Component, sourcePow: int) -> void:
 		sources[source].y = max(0, sourcePow - sources[source].x)
 		recalculatePower()
 	
 	func recalculatePower() -> void:
-		power = 0
+		var newPower = 0
 		for source in sources:
 			var data: Vector2i = sources[source]
-			if data.y >= power:
-				power = data.y
+			if data.y >= newPower:
+				newPower = data.y
 				maxSource = source
-		powersChanged.emit()
+		if power != newPower:
+			power = newPower
+			powersChanged.emit()
+	
+	func _to_string() -> String:
+		var str: String = "Sources: "
+		for source in sources:
+			str += str(source.pos) + " -> " + str(sources[source]) + " | "
+		return str
 
 
 var inputs: Array[Connection] = []
@@ -112,12 +124,9 @@ func isEqualToNew():
 
 
 func propagateRegenRequest():
-	var regeneratedSources: Array[Component]
 	for input in inputs:
 		for source in input.sources:
-			if source not in regeneratedSources:
-				source.regenConnections()
-				regeneratedSources.append(source)
+			source.requestRegen()
 
 
 func interact():
