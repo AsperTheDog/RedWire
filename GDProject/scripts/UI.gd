@@ -1,41 +1,42 @@
 extends Node
 
-var currentDragMachine: World.MachineType:
+var currentDragComponent: Component.Type:
 	set(value):
-		currentDragMachine = value
+		currentDragComponent = value
 		updatePressedButton(value)
-		Save.selectedMachine = currentDragMachine
+		Game.selectedComponent = currentDragComponent
+
 
 @onready var gridButtons: Dictionary = {
-	World.MachineType.WIRE: $UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin/TileTex,
-	World.MachineType.REPEATER: $UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin/TileTex,
-	World.MachineType.COMPARATOR: $UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin/TileTex,
-	World.MachineType.NEGATOR: $UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin/TileTex,
-	World.MachineType.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex,
-	World.MachineType.CROSSING: $UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin/TileTex,
-	World.MachineType.FLICKER: $UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin/TileTex,
-	World.MachineType.SLOGGER: $UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin/TileTex
+	Component.Type.WIRE: $UILayer/Drawer/margin/scroll/Grid/Wire/TileBG/margin/TileTex,
+	Component.Type.REPEATER: $UILayer/Drawer/margin/scroll/Grid/Repeater/TileBG/margin/TileTex,
+	Component.Type.COMPARATOR: $UILayer/Drawer/margin/scroll/Grid/Comparator/TileBG/margin/TileTex,
+	Component.Type.NEGATOR: $UILayer/Drawer/margin/scroll/Grid/Negator/TileBG/margin/TileTex,
+	Component.Type.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex,
+	Component.Type.CROSSING: $UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin/TileTex,
+	Component.Type.FLICKER: $UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin/TileTex,
+	Component.Type.SLOGGER: $UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin/TileTex
 }
 
 
 func _ready() -> void:
-	Save.wireChanged.connect(onWireColorChange)
-	Save.bgChanged.connect(onBGColorChange)
-	Save.rotationChanged.connect(onRotationChange)
+	Game.wireChanged.connect(onWireColorChange)
+	Game.bgChanged.connect(onBGColorChange)
+	Game.rotationChanged.connect(onRotationChange)
 	for buttKey in gridButtons:
 		var butt = gridButtons[buttKey]
 		butt.mouse_entered.connect(func(): butt.get_node("../../hover").show())
 		butt.mouse_exited.connect(func(): butt.get_node("../../hover").hide())
-		butt.pressed.connect(func(): currentDragMachine = buttKey)
-	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color_changed.connect(func(color): Save.bgColor = color)
-	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color_changed.connect(func(color): Save.wireColor = color)
-	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.toggled.connect(func(pressed): Save.doOverwrite = pressed)
-	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color = Save.bgColor
-	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color = Save.wireColor
-	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.set_pressed_no_signal(Save.doOverwrite)
-	onWireColorChange(Save.wireColor)
-	onBGColorChange(Save.bgColor)
-	currentDragMachine = World.MachineType.WIRE
+		butt.pressed.connect(func(): currentDragComponent = buttKey)
+	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color_changed.connect(func(color): Game.bgColor = color)
+	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color_changed.connect(func(color): Game.wireColor = color)
+	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.toggled.connect(func(pressed): Game.doOverwrite = pressed)
+	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color = Game.bgColor
+	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color = Game.wireColor
+	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.set_pressed_no_signal(Game.doOverwrite)
+	onWireColorChange(Game.wireColor)
+	onBGColorChange(Game.bgColor)
+	currentDragComponent = Component.Type.WIRE
 
 
 func _process(delta: float):
@@ -46,7 +47,7 @@ func _process(delta: float):
 		butt.button_pressed = not butt.button_pressed
 
 
-func updatePressedButton(pressed: World.MachineType):
+func updatePressedButton(pressed: Component.Type):
 	for butt in gridButtons:
 		gridButtons[butt].get_node("../../press").visible = false
 	gridButtons[pressed].get_node("../../press").visible = true
@@ -76,7 +77,7 @@ func onBGColorChange(color: Color):
 	$BackgroundLayer/ColorRect.color = color
 
 
-func onRotationChange(rot: Machine.Dir):
+func onRotationChange(rot: int):
 	for butt in gridButtons:
 		for child in gridButtons[butt].get_node("../").get_children():
 			child.pivot_offset = child.size / 2
@@ -87,8 +88,8 @@ func TPSChanged(newTPS: String):
 	if not newTPS.is_valid_int(): return
 	var tps: int = newTPS.to_int()
 	if tps <= 0: return
-	Save.tps = tps
+	Game.tps = tps
 
 
 func eraserToggled(active: bool) -> void:
-	Save.eraserActive = active
+	Game.eraserActive = active

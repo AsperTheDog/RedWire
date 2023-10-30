@@ -1,86 +1,89 @@
-extends Machine
-class_name Wire
+class_name Wire extends Component
 
 # key is UP, RIGHT, DOWN, LEFT. Encoded in binary
 # value is Coords.x, Coords.y, AltID. Stored as Vector3i
 # gradient is (AltID + 15) - power
 var wireLayout: Dictionary = {
 	0b0000: Vector3i(1, 0, 0),
-	0b0001: Vector3i(2, 0, 16),
-	0b0010: Vector3i(2, 0, 0),
-	0b0011: Vector3i(4, 0, 16),
-	0b0100: Vector3i(2, 0, 48),
-	0b0101: Vector3i(3, 0, 16),
+	0b0001: Vector3i(2, 0, 32),
+	0b0010: Vector3i(2, 0, 48),
+	0b0011: Vector3i(4, 0, 48),
+	0b0100: Vector3i(2, 0, 0),
+	0b0101: Vector3i(3, 0, 0),
 	0b0110: Vector3i(4, 0, 0),
-	0b0111: Vector3i(5, 0, 0),
-	0b1000: Vector3i(2, 0, 32),
+	0b0111: Vector3i(5, 0, 48),
+	0b1000: Vector3i(2, 0, 16),
 	0b1001: Vector3i(4, 0, 32),
-	0b1010: Vector3i(3, 0, 0),
-	0b1011: Vector3i(5, 0, 16),
-	0b1100: Vector3i(4, 0, 48),
-	0b1101: Vector3i(5, 0, 32),
-	0b1110: Vector3i(5, 0, 48),
-	0b1111: Vector3i(0, 0, 0),
+	0b1010: Vector3i(3, 0, 16),
+	0b1011: Vector3i(5, 0, 32),
+	0b1100: Vector3i(4, 0, 16),
+	0b1101: Vector3i(5, 0, 16),
+	0b1110: Vector3i(5, 0, 0),
+	0b1111: Vector3i(0, 0, 0)
 }
 
 
-func _init(world: World, pos: Vector2i, rot: Dir):
-	super._init(world, pos, rot)
-	world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
-	world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
-	world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
-	world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
+func _init(pos: Vector2i, rot: int) -> void:
+	self.pos = pos
+	self.rot = rot
+	for side in Side.ALL:
+		self.inputs.append(Connection.new())
+		self.inputs.back().powersChanged.connect(onPowerUpdate.bind(side))
 
 
-func die():
-	super.die()
-	world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
-	world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
-	world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
-	world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
+func getConnectionID(dir: int) -> int:
+	return Side.opposite[dir]
 
 
-func isEqual(other: Machine) -> bool:
-	return other.getType() == getType() and other.pos == pos
+func isConnectedAt(dir: int) -> bool:
+	return true
 
 
-func update():
-	var neighPow := 0
-	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.UP, Dir.DOWN) - 1)
-	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.DOWN, Dir.UP) - 1)
-	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.RIGHT, Dir.LEFT) - 1)
-	neighPow = max(neighPow, world.getPowerAt(pos + Vector2i.LEFT, Dir.RIGHT) - 1)
-	if power != neighPow:
-		power = neighPow
-		world.requestUpdate(pos + Vector2i.UP, Dir.DOWN)
-		world.requestUpdate(pos + Vector2i.DOWN, Dir.UP)
-		world.requestUpdate(pos + Vector2i.LEFT, Dir.RIGHT)
-		world.requestUpdate(pos + Vector2i.RIGHT, Dir.LEFT)
-	world.updateTextures(World.Layer.REDSTONE1, pos)
-
-
-func getPower(dir: Dir):
-	return power
-
-
-func interact():
-	pass
-
-
-func getType() -> World.MachineType:
-	return World.MachineType.WIRE
+func getNeighbors() -> Array[Component]:
+	var neighbors: Array[Component] = [null, null, null, null]
+	for side in Side.ALL:
+		var currentTile = Game.world.getTileAt(pos + Side.vectors[side])
+		var currentSideID = currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
+		if currentSideID != -1: 
+			neighbors[side] = currentTile
+	return neighbors
 
 
 func updateTileAtLayer(layer: World.Layer):
 	if layer != World.Layer.REDSTONE1: return
-	var connUp = world.isConnectedAt(pos + Vector2i.UP, Machine.Dir.DOWN)
-	var connRight = world.isConnectedAt(pos + Vector2i.RIGHT, Machine.Dir.LEFT)
-	var connDown = world.isConnectedAt(pos + Vector2i.DOWN, Machine.Dir.UP)
-	var connLeft = world.isConnectedAt(pos + Vector2i.LEFT, Machine.Dir.RIGHT)
-	var code := (int(connLeft) + (int(connDown) << 1) + (int(connRight) << 2) + (int(connUp) << 3))
+	var code := 0
+	for side in Side.ALL:
+		var conn = Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side])
+		if conn: code += 1 << side
 	var tilePos = wireLayout[code]
-	world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - power)
+	var power = getPowerInput()
+	Game.world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - power)
 
 
-func isConnected(dir: Dir) -> bool:
+func getPowerInput() -> int:
+	var maxPower := 0
+	for input in self.inputs.size():
+		maxPower = max(maxPower, inputs[input].power)
+	return maxPower
+
+
+func onPowerUpdate(id :int):
+	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+
+
+func onNeighborChanged(side: int):
+	if Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side]):
+		Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+		propagateRegenRequest()
+
+
+func getType() -> Type:
+	return Type.WIRE
+
+
+func isEqual(other: Component):
+	return other.getType() == getType() and other.pos == pos
+
+
+func isEqualToNew():
 	return true

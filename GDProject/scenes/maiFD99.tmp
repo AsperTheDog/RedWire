@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://ddtqu2m3j5pjn"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_sh64r"]
+[ext_resource type="TileSet" uid="uid://buv88dy0yaxhi" path="res://main.tres" id="2_0ng7n"]
+[ext_resource type="PackedScene" uid="uid://diurl1x0378ds" path="res://scenes/UI.tscn" id="2_gv0m2"]
+[ext_resource type="Script" path="res://scripts/World.gd" id="3_n4iy2"]
+
+[node name="Main" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_sh64r")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="world" type="TileMap" parent="."]
+texture_filter = 1
+tile_set = ExtResource("2_0ng7n")
+format = 2
+layer_0/name = "Machines"
+layer_1/name = "Redstone1"
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 1
+layer_1/tile_data = PackedInt32Array()
+layer_2/name = "Redstone2"
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 1)
+layer_2/y_sort_enabled = false
+layer_2/y_sort_origin = 0
+layer_2/z_index = 1
+layer_2/tile_data = PackedInt32Array()
+layer_3/name = "Redstone3"
+layer_3/enabled = true
+layer_3/modulate = Color(1, 1, 1, 1)
+layer_3/y_sort_enabled = false
+layer_3/y_sort_origin = 0
+layer_3/z_index = 1
+layer_3/tile_data = PackedInt32Array()
+layer_4/name = "Redstone4"
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 1)
+layer_4/y_sort_enabled = false
+layer_4/y_sort_origin = 0
+layer_4/z_index = 0
+layer_4/tile_data = PackedInt32Array()
+layer_5/name = "Overlay"
+layer_5/enabled = true
+layer_5/modulate = Color(1, 1, 1, 0.352941)
+layer_5/y_sort_enabled = false
+layer_5/y_sort_origin = 0
+layer_5/z_index = 10
+layer_5/tile_data = PackedInt32Array()
+script = ExtResource("3_n4iy2")
+
+[node name="UI" parent="." instance=ExtResource("2_gv0m2")]

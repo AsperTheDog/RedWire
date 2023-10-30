@@ -17,7 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Save="*res://scripts/SaveManager.gd"
+Game="*res://scripts/StateManager.gd"
+Side="*res://scripts/SideData.gd"
 
 [debug]
 

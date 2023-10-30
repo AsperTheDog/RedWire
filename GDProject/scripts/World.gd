@@ -1,17 +1,6 @@
 extends TileMap
 class_name World
 
-enum MachineType {
-	WIRE,
-	REPEATER,
-	COMPARATOR,
-	NEGATOR,
-	GENERATOR,
-	CROSSING,
-	FLICKER,
-	SLOGGER,
-	NONE
-}
 
 enum Layer {
 	MACHINE,
@@ -23,47 +12,25 @@ enum Layer {
 	ALL
 }
 
+var world: Dictionary = {}
 
-@onready var world: Dictionary
-
-var machines: Dictionary = {
-	MachineType.WIRE: Wire,
-	MachineType.REPEATER: Repeater,
-	MachineType.COMPARATOR: Comparator,
-	MachineType.NEGATOR: Negator,
-	MachineType.GENERATOR: Generator,
-	MachineType.CROSSING: Crossroad,
-	MachineType.FLICKER: null,
-	MachineType.SLOGGER: null
+static var componentClasses: Dictionary = {
+	Component.Type.WIRE: Wire,
+	Component.Type.REPEATER: Repeater,
+	Component.Type.COMPARATOR: Comparator,
+	Component.Type.NEGATOR: Negator,
+	Component.Type.GENERATOR: Generator,
+	Component.Type.CROSSING: Crossing,
+	Component.Type.FLICKER: Flicker,
+	Component.Type.SLOGGER: Slogger
 }
-var forcedDelays: Dictionary = {
-	MachineType.WIRE: 0,
-	MachineType.REPEATER: 0,
-	MachineType.COMPARATOR: 1,
-	MachineType.NEGATOR: 1,
-	MachineType.GENERATOR: 0,
-	MachineType.CROSSING: 0,
-	MachineType.FLICKER: 0,
-	MachineType.SLOGGER: 0
-}
-
-var dragging: bool = false
 
 
 func _ready():
-	Save.wireChanged.connect(updateWireColor)
-	Save.eraserToggled.connect(onEraserToggle)
-	updateWireColor(Save.wireColor)
-
-
-func _process(delta: float) -> void:
-	if dragging:
-		updateDragging()
-	if Input.is_action_just_pressed("interact"):
-		if not isTileEmpty(lastMousePos):
-			world[lastMousePos].interact()
-	if Input.is_action_just_pressed("rotate"):
-		Save.placingRotation = (Save.placingRotation + 1) % Machine.Dir.ANY
+	Game.world = self
+	Game.wireChanged.connect(updateWireColor)
+	Game.eraserToggled.connect(onEraserToggle)
+	updateWireColor(Game.wireColor)
 
 
 func updateWireColor(color: Color):
@@ -77,18 +44,19 @@ func onEraserToggle(active: bool):
 	set_layer_modulate(Layer.OVERLAY, Color(1.0, 0.5, 0.5, 0.35) if active else Color(1.0, 1.0, 1.0, 0.35))
 
 
-func placeMachine(type: MachineType, pos: Vector2i, rot: Machine.Dir):
-	if type == MachineType.NONE or machines[type] == null:
-		if pos in world:
-			world[pos].die()
-		world.erase(pos)
-		cleanAllLayersAt(pos)
-		return
-	
-	world[pos] = machines[type].new(self, pos, rot)
-	world[pos].update()
-	cleanAllLayersAt(pos)
-	updateTextures(Layer.ALL, pos)
+func getTileAt(pos: Vector2i) -> Component:
+	if pos not in world: return null
+	return world[pos]
+
+
+func getTileConnectionIDAt(pos: Vector2i, dir: int) -> int:
+	if pos not in world: return -1
+	return world[pos].getConnectionID(dir)
+
+
+func isTileConnectedAt(pos: Vector2i, dir: int) -> bool:
+	if pos not in world: return false
+	return world[pos].isConnectedAt(dir)
 
 
 func updateTextures(layer: Layer, pos: Vector2i):
@@ -113,6 +81,56 @@ func cleanAllLayersAt(pos: Vector2i):
 	erase_cell(Layer.REDSTONE4, pos)
 
 
+func isTileEmpty(pos: Vector2i):
+	return not pos in world
+
+
+# --- NAVIGATION ---
+
+
+var lastMousePos: Vector2i = Vector2i.ZERO
+var dragging: bool = false
+
+
+func _process(delta: float) -> void:
+	if dragging:
+		updateDragging()
+	if Input.is_action_just_pressed("interact"):
+		if not isTileEmpty(lastMousePos):
+			world[lastMousePos].interact()
+	if Input.is_action_just_pressed("rotate"):
+		Game.placingRotation = (Game.placingRotation + 1) % Side.ANY
+
+
+func updateDragging():
+	if Game.eraserActive:
+		placeComponent(Component.Type.NONE, lastMousePos, Side.ALL)
+		return
+	if not isTileEmpty(lastMousePos) and not Game.doOverwrite:
+		return
+	placeComponent(Game.selectedComponent, lastMousePos, Game.placingRotation)
+
+
+func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
+	if pos in world and world[pos].isEqualToNew(): return
+	if type == Component.Type.NONE:
+		if pos in world:
+			world[pos].die()
+		world.erase(pos)
+		cleanAllLayersAt(pos)
+		return
+	world[pos] = componentClasses[type].new(pos, rot)
+	cleanAllLayersAt(pos)
+	updateTextures(Layer.ALL, pos)
+	notifyNeighbors(pos)
+
+
+func notifyNeighbors(pos: Vector2i):
+	for side in Side.ALL:
+		var neighPos = pos + Side.vectors[side]
+		if neighPos in world: world[neighPos].onNeighborChanged(Side.opposite[side])
+
+
 func placeOverlay(pos: Vector2i):
 	set_cell(Layer.OVERLAY as int, pos, 0, Vector2i.ZERO, 0)
 
@@ -121,44 +139,6 @@ func removeOverlay(pos: Vector2i):
 	erase_cell(Layer.OVERLAY as int, pos)
 
 
-func requestUpdate(pos: Vector2i, dir: Machine.Dir, delay: int = 0):
-	if pos not in world or not world[pos].isConnected(dir): return
-	var count := 0
-	while count < delay:
-		await get_tree().physics_frame
-		count += 1
-	world[pos].update()
-
-
-func getTileAt(pos: Vector2i):
-	if isTileEmpty(pos): return null
-	return world[pos]
-
-
-func isTileEmpty(pos: Vector2i):
-	return not pos in world
-
-
-func getPowerAt(pos: Vector2i, from: Machine.Dir) -> int:
-	if isTileEmpty(pos): return 0
-	return world[pos].getPower(from)
-
-
-func isConnectedAt(pos: Vector2i, dir: Machine.Dir) -> bool:
-	if isTileEmpty(pos) or world[pos].aboutToDie: return false
-	return world[pos].isConnected(dir)
-
-
-func updateDragging():
-	if Save.eraserActive:
-		placeMachine(MachineType.NONE, lastMousePos, Machine.Dir.ANY)
-		return
-	if not isTileEmpty(lastMousePos) and not Save.doOverwrite:
-		return
-	placeMachine(Save.selectedMachine, lastMousePos, Save.placingRotation)
-
-
-var lastMousePos: Vector2i = Vector2i.ZERO
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var halfSize := get_viewport_rect().size / 2
