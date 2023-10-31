@@ -1,0 +1,82 @@
+[gd_scene load_steps=4 format=3 uid="uid://kgl4c3h74rlo"]
+
+[ext_resource type="Script" path="res://scripts/test.gd" id="1_p38yj"]
+[ext_resource type="TileSet" uid="uid://buv88dy0yaxhi" path="res://main.tres" id="2_tjux4"]
+[ext_resource type="Script" path="res://scripts/World.gd" id="2_y42ax"]
+
+[node name="test" type="Node2D"]
+script = ExtResource("1_p38yj")
+
+[node name="world" type="TileMap" parent="."]
+texture_filter = 1
+tile_set = ExtResource("2_tjux4")
+format = 2
+layer_0/name = "Machines"
+layer_1/name = "Redstone1"
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 1
+layer_1/tile_data = PackedInt32Array()
+layer_2/name = "Redstone2"
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 1)
+layer_2/y_sort_enabled = false
+layer_2/y_sort_origin = 0
+layer_2/z_index = 1
+layer_2/tile_data = PackedInt32Array()
+layer_3/name = "Redstone3"
+layer_3/enabled = true
+layer_3/modulate = Color(1, 1, 1, 1)
+layer_3/y_sort_enabled = false
+layer_3/y_sort_origin = 0
+layer_3/z_index = 1
+layer_3/tile_data = PackedInt32Array()
+layer_4/name = "Redstone4"
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 1)
+layer_4/y_sort_enabled = false
+layer_4/y_sort_origin = 0
+layer_4/z_index = 0
+layer_4/tile_data = PackedInt32Array()
+layer_5/name = "Overlay"
+layer_5/enabled = true
+layer_5/modulate = Color(1, 1, 1, 0.352941)
+layer_5/y_sort_enabled = false
+layer_5/y_sort_origin = 0
+layer_5/z_index = 10
+layer_5/tile_data = PackedInt32Array()
+script = ExtResource("2_y42ax")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 157.0
+offset_bottom = 48.0
+text = "Benchmark"
+
+[node name="Label" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 56.0
+offset_right = 158.0
+offset_bottom = 197.0
+text = "Tests: %s
+Size: %s
+Time: %s"
+
+[connection signal="pressed" from="CanvasLayer/Control/Button" to="." method="_on_button_pressed"]

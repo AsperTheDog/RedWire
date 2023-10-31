@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 		if not isTileEmpty(lastMousePos):
 			world[lastMousePos].interact()
 	if Input.is_action_just_pressed("rotate"):
-		Game.placingRotation = (Game.placingRotation + 1) % Side.ANY
+		Game.placingRotation = (Game.placingRotation + 1) % Side.ALL
 
 
 func updateDragging():

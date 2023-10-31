@@ -148,7 +148,7 @@ texture = ExtResource("2_my54b")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_axpav"]
 resource_name = "Wires"
 texture = ExtResource("2_ogsdc")
-0:0/next_alternative_id = 64
+0:0/next_alternative_id = 65
 0:0/0 = 0
 0:0/1 = 1
 0:0/1/modulate = Color(0.933333, 0.933333, 0.933333, 1)

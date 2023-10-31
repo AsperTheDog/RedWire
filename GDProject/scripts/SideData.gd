@@ -22,5 +22,9 @@ var vectors: Dictionary = {
 }
 
 
-func applyRotation(side: int, offset: int) -> int:
-	return ((side - offset) + Side.ANY) % Side.ANY
+func removeRotation(side: int, offset: int) -> int:
+	return ((side - offset) + Side.ALL) % Side.ALL
+
+
+func rotate(side: int, rot: int) -> int:
+	return (side + rot) % Side.ALL

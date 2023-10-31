@@ -60,7 +60,7 @@ func interact():
 
 
 func onNeighborChanged(dir: int):
-	regenConnections()
+	requestRegen()
 
 
 var requested: bool = false
@@ -75,7 +75,7 @@ func regenConnections():
 	resetting.emit(self)
 	var exploredNodes: Array[Vector2i] = []
 	var nodesToExplore: Array[CircuitNode] = []
-	var neighbors := getNeighbors()
+	var neighbors := getOutputs()
 	for side in neighbors.size():
 		if neighbors[side] != null: 
 			nodesToExplore.append(CircuitNode.new(neighbors[side], side, 1))
@@ -83,7 +83,7 @@ func regenConnections():
 	while not nodesToExplore.is_empty():
 		var nextNode: CircuitNode = nodesToExplore.pop_front()
 		nextNode.elem.registerConnection(self, nextNode.side, nextNode.distance, 15 if activated else 0)
-		if nextNode.distance == 15: continue
+		if nextNode.distance == 14: continue
 		neighbors = nextNode.elem.getNeighbors()
 		for side in neighbors.size():
 			if neighbors[side] != null and not neighbors[side].pos in exploredNodes:
@@ -91,13 +91,12 @@ func regenConnections():
 				exploredNodes.append(neighbors[side].pos)
 
 
-func getNeighbors() -> Array[Component]:
+func getOutputs() -> Array[Component]:
 	var neighbors: Array[Component] = [null, null, null, null]
 	for side in Side.ALL:
-		var currentTile = Game.world.getTileAt(pos + Side.vectors[side])
-		var currentSideID = currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
+		var currentTile := Game.world.getTileAt(pos + Side.vectors[side])
+		var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
 		if currentSideID != -1: 
 			neighbors[side] = currentTile
 	return neighbors
-
 

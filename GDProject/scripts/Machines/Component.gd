@@ -96,6 +96,10 @@ func getNeighbors() -> Array[Component]:
 	return [null, null, null, null]
 
 
+func getNeighborAt(side: int) -> Component:
+	return null
+
+
 func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
 	var connID = getConnectionID(side)
 	if connID == -1: return false

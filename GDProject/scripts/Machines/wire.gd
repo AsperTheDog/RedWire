@@ -45,11 +45,15 @@ func isConnectedAt(dir: int) -> bool:
 func getNeighbors() -> Array[Component]:
 	var neighbors: Array[Component] = [null, null, null, null]
 	for side in Side.ALL:
-		var currentTile = Game.world.getTileAt(pos + Side.vectors[side])
-		var currentSideID = currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
+		var currentTile := Game.world.getTileAt(pos + Side.vectors[side])
+		var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
 		if currentSideID != -1: 
 			neighbors[side] = currentTile
 	return neighbors
+
+
+func getNeighborAt(side: int) -> Component:
+	return Game.world.getTileAt(pos + Side.vectors[side])
 
 
 func updateTileAtLayer(layer: World.Layer):
