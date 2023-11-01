@@ -76,16 +76,16 @@ func regenConnections(currentPower: int):
 	var neighbors := getOutputs()
 	for side in neighbors.size():
 		if neighbors[side] != null: 
-				nodesToExplore.append(CircuitNode.new(neighbors[side], side, 1))
+				nodesToExplore.append(CircuitNode.new(neighbors[side], Side.opposite[side], 1))
 	while not nodesToExplore.is_empty():
 		var nextNode: CircuitNode = nodesToExplore.pop_front()
 		if not nextNode.elem.registerConnection(self, nextNode.side, nextNode.distance, currentPower):
 			continue
 		if nextNode.distance == 14: continue
-		neighbors = nextNode.elem.getNeighbors(Side.opposite[nextNode.side])
+		neighbors = nextNode.elem.getNeighbors(nextNode.side)
 		for side in neighbors.size():
 			if neighbors[side] != null:
-				nodesToExplore.append(CircuitNode.new(neighbors[side], side, nextNode.distance + 1))
+				nodesToExplore.append(CircuitNode.new(neighbors[side], Side.opposite[side], nextNode.distance + 1))
 	requested = false
 
 

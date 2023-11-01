@@ -44,13 +44,6 @@ func getNeighborAt(side: int) -> Component:
 	return Game.world.getTileAt(pos + Side.vectors[side])
 
 
-func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
-	var connID = getConnectionID(Side.opposite[side])
-	if connID == -1: return false
-	inputs[connID].registerSource(source, distance, currentPow)
-	return true
-
-
 func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
