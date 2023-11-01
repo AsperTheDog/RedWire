@@ -21,7 +21,7 @@ func isConnectedAt(dir: int) -> bool:
 
 func getNeighbors(from: int) -> Array[Component]:
 	var neighbors: Array[Component] = [null, null, null, null]
-	var dir: int = Side.opposite[Side.removeRotation(from, rot)]
+	var dir: int = Side.opposite[from]
 	var currentTile := Game.world.getTileAt(pos + Side.vectors[dir])
 	var currentSideID := currentTile.getConnectionID(Side.opposite[dir]) if currentTile != null else -1
 	if currentSideID != -1:
