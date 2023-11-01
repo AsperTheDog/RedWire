@@ -25,24 +25,38 @@ class Connection:
 			
 	var maxSource: Component = null
 	
+	var shouldUpdate: bool = true
+	
+	
 	func resetSources() -> void:
 		for source in sources:
-			source.update.disconnect(sourceUpdate)
+			if shouldUpdate:
+				source.update.disconnect(sourceUpdate)
 			source.deleted.disconnect(deleteSource)
 		sources.clear()
 		power = 0
 		powersChanged.emit()
-
+	
+	func setSourceUpdateActive(doSet: bool) -> void:
+		for source in sources:
+			if doSet: source.update.connect(sourceUpdate)
+			else: source.update.disconnect(sourceUpdate)
+		shouldUpdate = doSet
+		recalculatePower()
+	
 	func deleteSource(source: Component) -> void:
 		if source not in sources: return
-		source.update.disconnect(sourceUpdate)
+		if shouldUpdate:
+			source.update.disconnect(sourceUpdate)
 		source.deleted.disconnect(deleteSource)
 		sources.erase(source)
 		recalculatePower()
 
-	func registerSource(source: Component, distance: int, currentPow: int) -> bool:
+	func registerSource(source: Component, distance: int, currentPow: int, shouldUpdate: bool = true) -> bool:
 		if source in sources: return false
-		source.update.connect(sourceUpdate)
+		self.shouldUpdate = shouldUpdate
+		if shouldUpdate:
+			source.update.connect(sourceUpdate)
 		source.deleted.connect(deleteSource)
 		sources[source] = Vector2i(distance, max(0, currentPow - distance))
 		recalculatePower()
@@ -53,6 +67,12 @@ class Connection:
 		recalculatePower()
 	
 	func recalculatePower() -> void:
+		if not shouldUpdate:
+			var prevPow = power
+			power = 0
+			if prevPow != 0:
+				powersChanged.emit()
+			return 
 		var newPower = 0
 		for source in sources:
 			var data: Vector2i = sources[source]
@@ -100,7 +120,8 @@ func getNeighbors(from: int) -> Array[Component]:
 func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
 	var connID = getConnectionID(side)
 	if connID == -1: return false
-	return inputs[connID].registerSource(source, distance, currentPow)
+	var shouldUpdate: bool = getType() != Component.Type.WIRE or Game.updateWires
+	return inputs[connID].registerSource(source, distance, currentPow, shouldUpdate)
 
 
 func updateTileAtLayer(layer: World.Layer):

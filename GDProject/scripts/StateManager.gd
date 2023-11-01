@@ -5,6 +5,7 @@ signal wireChanged(color: Color)
 signal overwriteChanged(overwrite: bool)
 signal rotationChanged(rotation: int)
 signal eraserToggled(active: bool)
+signal wireDisplayUpdated(doUpdate: bool)
 
 var world: World = null
 
@@ -38,3 +39,9 @@ var eraserActive: bool:
 	set(value):
 		eraserActive = value
 		eraserToggled.emit(value)
+
+var updateWires: bool = true:
+	set(value):
+		if updateWires == value: return
+		updateWires = value
+		wireDisplayUpdated.emit(value)

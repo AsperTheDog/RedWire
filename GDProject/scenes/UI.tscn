@@ -751,6 +751,18 @@ texture_hover = SubResource("GradientTexture2D_keomu")
 ignore_texture_size = true
 stretch_mode = 4
 
+[node name="VSeparator4" type="VSeparator" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="DisplayWire" type="CheckButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+focus_mode = 0
+text = "Wire Upd."
+
+[node name="VSeparator5" type="VSeparator" parent="UILayer/Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
 [node name="Overwrite" type="CheckButton" parent="UILayer/Control/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
@@ -797,3 +809,4 @@ mouse_filter = 2
 [connection signal="pressed" from="UILayer/Drawer/TextureButton" to="." method="toggleDrawer"]
 [connection signal="text_submitted" from="UILayer/Control/MarginContainer/HBoxContainer/LineEdit" to="." method="TPSChanged"]
 [connection signal="toggled" from="UILayer/Control/MarginContainer/HBoxContainer/TextureRect/eraser" to="." method="eraserToggled"]
+[connection signal="toggled" from="UILayer/Control/MarginContainer/HBoxContainer/DisplayWire" to="." method="toggleWireDisplay"]

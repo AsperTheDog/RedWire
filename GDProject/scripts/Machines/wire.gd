@@ -28,6 +28,12 @@ func _init(pos: Vector2i, rot: int) -> void:
 	self.rot = rot
 	self.inputs.append(Connection.new())
 	self.inputs.back().powersChanged.connect(onPowerUpdate.bind(0))
+	Game.wireDisplayUpdated.connect(updateInputDisplay)
+
+
+func updateInputDisplay(value: bool):
+	for input in inputs:
+		input.setSourceUpdateActive(value)
 
 
 func getConnectionID(dir: int) -> int:

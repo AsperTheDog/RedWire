@@ -64,7 +64,7 @@ func requestRegen():
 
 
 func getType() -> Type:
-	return Type.REPEATER
+	return Type.NEGATOR
 
 
 func isEqual(other: Component):

@@ -35,6 +35,7 @@ func _ready() -> void:
 	$UILayer/Control/MarginContainer/HBoxContainer/BGColor.color = Game.bgColor
 	$UILayer/Control/MarginContainer/HBoxContainer/WireColor.color = Game.wireColor
 	$UILayer/Control/MarginContainer/HBoxContainer/Overwrite.set_pressed_no_signal(Game.doOverwrite)
+	$UILayer/Control/MarginContainer/HBoxContainer/DisplayWire.set_pressed_no_signal(Game.updateWires)
 	onWireColorChange(Game.wireColor)
 	onBGColorChange(Game.bgColor)
 	currentDragComponent = Component.Type.WIRE
@@ -94,3 +95,7 @@ func TPSChanged(newTPS: String):
 
 func eraserToggled(active: bool) -> void:
 	Game.eraserActive = active
+
+
+func toggleWireDisplay(active: bool) -> void:
+	Game.updateWires = active
