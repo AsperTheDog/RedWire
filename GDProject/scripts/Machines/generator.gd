@@ -28,19 +28,19 @@ func _init(pos: Vector2i, rot: int):
 
 
 func die():
-	deleted.emit()
+	deleted.emit(self)
 
 
 func getType() -> Type:
-	return Type.NONE
+	return Type.GENERATOR
 
 
 func isEqual(other: Component):
 	return other.getType() == getType() and other.pos == pos and other.activated == activated
 
 
-func isEqualToNew():
-	return not activated
+func isEqualToNew(type: Type):
+	return getType() == type and not activated
 
 
 func isConnectedAt(dir: int) -> bool:
@@ -67,28 +67,26 @@ var requested: bool = false
 func requestRegen():
 	if requested: return
 	requested = true
-	regenConnections.call_deferred()
+	regenConnections.call_deferred(15 if activated else 0)
 
 
-func regenConnections():
-	requested = false
-	resetting.emit(self)
-	var exploredNodes: Array[Vector2i] = []
+func regenConnections(currentPower: int):
+	deleted.emit(self)
 	var nodesToExplore: Array[CircuitNode] = []
 	var neighbors := getOutputs()
 	for side in neighbors.size():
 		if neighbors[side] != null: 
-			nodesToExplore.append(CircuitNode.new(neighbors[side], side, 1))
-			exploredNodes.append(neighbors[side].pos)
+				nodesToExplore.append(CircuitNode.new(neighbors[side], side, 1))
 	while not nodesToExplore.is_empty():
 		var nextNode: CircuitNode = nodesToExplore.pop_front()
-		nextNode.elem.registerConnection(self, nextNode.side, nextNode.distance, 15 if activated else 0)
+		if not nextNode.elem.registerConnection(self, nextNode.side, nextNode.distance, currentPower):
+			continue
 		if nextNode.distance == 14: continue
-		neighbors = nextNode.elem.getNeighbors()
+		neighbors = nextNode.elem.getNeighbors(Side.opposite[nextNode.side])
 		for side in neighbors.size():
-			if neighbors[side] != null and not neighbors[side].pos in exploredNodes:
+			if neighbors[side] != null:
 				nodesToExplore.append(CircuitNode.new(neighbors[side], side, nextNode.distance + 1))
-				exploredNodes.append(neighbors[side].pos)
+	requested = false
 
 
 func getOutputs() -> Array[Component]:

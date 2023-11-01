@@ -13,8 +13,7 @@ enum Type {
 }
 
 signal update(comp: Component, power: int)
-signal resetting(comp: Component)
-signal deleted
+signal deleted(comp: Component)
 
 
 class Connection:
@@ -28,24 +27,25 @@ class Connection:
 	func resetSources() -> void:
 		for source in sources:
 			source.update.disconnect(sourceUpdate)
-			source.resetting.disconnect(deleteSource)
+			source.deleted.disconnect(deleteSource)
 		sources.clear()
-		recalculatePower()
+		power = 0
+		powersChanged.emit()
 
 	func deleteSource(source: Component) -> void:
 		if source not in sources: return
 		source.update.disconnect(sourceUpdate)
-		source.resetting.disconnect(deleteSource)
+		source.deleted.disconnect(deleteSource)
 		sources.erase(source)
 		recalculatePower()
 
-	func registerSource(source: Component, distance: int, currentPow: int) -> void:
-		if source not in sources:
-			source.update.connect(sourceUpdate)
-			source.resetting.connect(deleteSource)
-		elif sources[source].x <= distance: return
+	func registerSource(source: Component, distance: int, currentPow: int) -> bool:
+		if source in sources: return false
+		source.update.connect(sourceUpdate)
+		source.deleted.connect(deleteSource)
 		sources[source] = Vector2i(distance, max(0, currentPow - distance))
 		recalculatePower()
+		return true
 	
 	func sourceUpdate(source: Component, sourcePow: int) -> void:
 		sources[source].y = max(0, sourcePow - sources[source].x)
@@ -80,7 +80,7 @@ func _init(pos: Vector2i, rot: int) -> void:
 
 
 func die():
-	deleted.emit()
+	deleted.emit(self)
 	propagateRegenRequest()
 
 
@@ -92,19 +92,14 @@ func isConnectedAt(dir: int) -> bool:
 	return false
 
 
-func getNeighbors() -> Array[Component]:
+func getNeighbors(from: int) -> Array[Component]:
 	return [null, null, null, null]
-
-
-func getNeighborAt(side: int) -> Component:
-	return null
 
 
 func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
 	var connID = getConnectionID(side)
 	if connID == -1: return false
-	inputs[connID].registerSource(source, distance, currentPow)
-	return true
+	return inputs[connID].registerSource(source, distance, currentPow)
 
 
 func updateTileAtLayer(layer: World.Layer):
@@ -123,8 +118,8 @@ func isEqual(other: Component):
 	return other.getType() == getType() and other.pos == pos and other.rot == rot
 
 
-func isEqualToNew():
-	return rot == Game.placingRotation
+func isEqualToNew(type: Type):
+	return type == getType() and rot == Game.placingRotation
 
 
 func propagateRegenRequest():

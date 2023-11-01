@@ -14,11 +14,6 @@ func _init(pos: Vector2i, rot: int) -> void:
 	requestRegen()
 
 
-func die():
-	deleted.emit()
-	propagateRegenRequest()
-
-
 func getConnectionID(dir: int) -> int:
 	return 0 if Side.removeRotation(dir, rot) == Side.DOWN else -1
 
@@ -34,20 +29,6 @@ func getOutputs():
 	var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
 	if currentSideID != -1: neighbors[side] = currentTile
 	return neighbors
-
-
-func getNeighbors() -> Array[Component]:
-	var neighbors: Array[Component] = [null, null, null, null]
-	var side := Side.rotate(Side.DOWN, rot)
-	var currentTile := Game.world.getTileAt(pos + Side.vectors[side])
-	var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
-	if currentSideID != -1: neighbors[side] = currentTile
-	return neighbors
-
-
-func getNeighborAt(side: int) -> Component:
-	if Side.removeRotation(side, rot) != Side.DOWN and Side.removeRotation(side, rot) != Side.UP: return null
-	return Game.world.getTileAt(pos + Side.vectors[side])
 
 
 func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
@@ -89,6 +70,12 @@ func onNeighborChanged(dir: int):
 		requestRegen()
 
 
+func requestRegen():
+	if requested: return
+	requested = true
+	regenConnections.call_deferred(15 if output else 0)
+
+
 func getType() -> Type:
 	return Type.REPEATER
 
@@ -97,8 +84,8 @@ func isEqual(other: Component):
 	return other.getType() == getType() and other.pos == pos and other.rot == rot and other.ticks == ticks
 
 
-func isEqualToNew():
-	return rot == Game.placingRotation and ticks == 1
+func isEqualToNew(type: Type):
+	return getType() == type and rot == Game.placingRotation and ticks == 1
 
 
 func propagateRegenRequest():

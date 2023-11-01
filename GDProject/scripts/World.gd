@@ -112,13 +112,18 @@ func updateDragging():
 
 
 func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
-	if pos in world and world[pos].isEqualToNew(): return
+	if pos in world and world[pos].isEqualToNew(type): return
 	if type == Component.Type.NONE:
-		if pos in world:
-			world[pos].die()
+		if pos not in world:
+			return
+		var elem = world[pos]
 		world.erase(pos)
+		elem.die()
+		notifyNeighbors(pos)
 		cleanAllLayersAt(pos)
 		return
+	if pos in world:
+		world[pos].die()
 	world[pos] = componentClasses[type].new(pos, rot)
 	cleanAllLayersAt(pos)
 	updateTextures(Layer.ALL, pos)

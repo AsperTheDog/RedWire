@@ -22,38 +22,31 @@ var wireLayout: Dictionary = {
 	0b1111: Vector3i(0, 0, 0)
 }
 
-var power: int = 0
-var maxInput: int = 0
-
 
 func _init(pos: Vector2i, rot: int) -> void:
 	self.pos = pos
 	self.rot = rot
-	for side in Side.ALL:
-		self.inputs.append(Connection.new())
-		self.inputs.back().powersChanged.connect(onPowerUpdate.bind(side))
+	self.inputs.append(Connection.new())
+	self.inputs.back().powersChanged.connect(onPowerUpdate.bind(0))
 
 
 func getConnectionID(dir: int) -> int:
-	return Side.opposite[dir]
+	return 0
 
 
 func isConnectedAt(dir: int) -> bool:
 	return true
 
 
-func getNeighbors() -> Array[Component]:
+func getNeighbors(from: int) -> Array[Component]:
 	var neighbors: Array[Component] = [null, null, null, null]
 	for side in Side.ALL:
+		if side == from: continue
 		var currentTile := Game.world.getTileAt(pos + Side.vectors[side])
 		var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
 		if currentSideID != -1: 
 			neighbors[side] = currentTile
 	return neighbors
-
-
-func getNeighborAt(side: int) -> Component:
-	return Game.world.getTileAt(pos + Side.vectors[side])
 
 
 func updateTileAtLayer(layer: World.Layer):
@@ -63,29 +56,16 @@ func updateTileAtLayer(layer: World.Layer):
 		var conn = Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side])
 		if conn: code += 1 << side
 	var tilePos = wireLayout[code]
-	Game.world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - power)
-
-
-func calculatePowerInput():
-	power = 0
-	for input in self.inputs.size():
-		if inputs[input].power > power:
-			power = inputs[input].power
-			maxInput = input
+	Game.world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - inputs[0].power)
 
 
 func onPowerUpdate(id :int):
-	if maxInput != id and inputs[id].power <= power: return
-	var prevPower = power
-	calculatePowerInput()
-	if prevPower == power: return
 	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
 
 
 func onNeighborChanged(side: int):
-	if Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side]):
-		Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
-		propagateRegenRequest()
+	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+	propagateRegenRequest()
 
 
 func getType() -> Type:
@@ -96,5 +76,5 @@ func isEqual(other: Component):
 	return other.getType() == getType() and other.pos == pos
 
 
-func isEqualToNew():
-	return true
+func isEqualToNew(type: Type):
+	return getType() == type

@@ -21,7 +21,7 @@ func _on_button_pressed() -> void:
 	for i in amount:
 		var tile: Generator = Game.world.getTileAt(Vector2i(0, 0))
 		var time = Time.get_ticks_msec()
-		tile.regenConnections()
+		tile.regenConnections(15 if tile.activated else 0)
 		times.append(Time.get_ticks_msec() - time)
 	var avg: float = 0
 	for time in times:
