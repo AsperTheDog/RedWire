@@ -9,7 +9,8 @@ enum Type {
 	NEGATOR,
 	COMPARATOR,
 	FLICKER,
-	SLOGGER
+	SLOGGER,
+	LAMP
 }
 
 signal update(comp: Component, power: int)

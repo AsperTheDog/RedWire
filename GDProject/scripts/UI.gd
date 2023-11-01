@@ -15,7 +15,8 @@ var currentDragComponent: Component.Type:
 	Component.Type.GENERATOR: $UILayer/Drawer/margin/scroll/Grid/Generator/TileBG/margin/TileTex,
 	Component.Type.CROSSING: $UILayer/Drawer/margin/scroll/Grid/Crossroad/TileBG/margin/TileTex,
 	Component.Type.FLICKER: $UILayer/Drawer/margin/scroll/Grid/Flicker/TileBG/margin/TileTex,
-	Component.Type.SLOGGER: $UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin/TileTex
+	Component.Type.SLOGGER: $UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG/margin/TileTex,
+	Component.Type.LAMP: $UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG/margin/TileTex
 }
 
 

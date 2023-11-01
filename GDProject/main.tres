@@ -144,6 +144,8 @@ texture = ExtResource("2_my54b")
 0:6/3 = 3
 0:6/3/flip_v = true
 0:6/3/transpose = true
+0:7/0 = 0
+1:7/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_axpav"]
 resource_name = "Wires"

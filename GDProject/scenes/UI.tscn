@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://diurl1x0378ds"]
+[gd_scene load_steps=41 format=3 uid="uid://diurl1x0378ds"]
 
 [ext_resource type="Texture2D" uid="uid://dc4nb2tg21enf" path="res://tiles/tileset_0001_Layer-31.png" id="1_k8vjh"]
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_vtre6"]
@@ -88,7 +88,7 @@ load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e45
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_txx15"]
 atlas = SubResource("CompressedTexture2D_l0o78")
-region = Rect2(0, 80, 16, 16)
+region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_sl0ao"]
 load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e454d396f69759e8.ctex"
@@ -117,6 +117,10 @@ load_path = "res://.godot/imported/tileset_0002_Layer-29.png-2b3fff854392cad2e45
 [sub_resource type="AtlasTexture" id="AtlasTexture_l0d2d"]
 atlas = SubResource("CompressedTexture2D_a5y8g")
 region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n44ps"]
+atlas = SubResource("CompressedTexture2D_umu6t")
+region = Rect2(0, 112, 16, 16)
 
 [sub_resource type="Gradient" id="Gradient_ww03v"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
@@ -566,6 +570,50 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0.145098)
 
 [node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Slogger/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.352941)
+
+[node name="Lamp" type="AspectRatioContainer" parent="UILayer/Drawer/margin/scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+stretch_mode = 0
+
+[node name="TileBG" type="PanelContainer" parent="UILayer/Drawer/margin/scroll/Grid/Lamp"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="margin" type="MarginContainer" parent="UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TileTex" type="TextureButton" parent="UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_n44ps")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TileTex2" type="TextureRect" parent="UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG/margin"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("AtlasTexture_txx15")
+expand_mode = 5
+
+[node name="hover" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.145098)
+
+[node name="press" type="ColorRect" parent="UILayer/Drawer/margin/scroll/Grid/Lamp/TileBG"]
 visible = false
 layout_mode = 2
 mouse_filter = 2

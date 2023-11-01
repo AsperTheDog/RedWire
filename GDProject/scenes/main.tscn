@@ -1,13 +1,13 @@
 [gd_scene load_steps=5 format=3 uid="uid://ddtqu2m3j5pjn"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_sh64r"]
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_a0q4y"]
 [ext_resource type="TileSet" uid="uid://buv88dy0yaxhi" path="res://main.tres" id="2_0ng7n"]
 [ext_resource type="PackedScene" uid="uid://diurl1x0378ds" path="res://scenes/UI.tscn" id="2_gv0m2"]
 [ext_resource type="Script" path="res://scripts/World.gd" id="3_n4iy2"]
 
 [node name="Main" type="Node2D"]
 texture_filter = 1
-script = ExtResource("1_sh64r")
+script = ExtResource("1_a0q4y")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

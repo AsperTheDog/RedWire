@@ -22,7 +22,8 @@ static var componentClasses: Dictionary = {
 	Component.Type.GENERATOR: Generator,
 	Component.Type.CROSSING: Crossing,
 	Component.Type.FLICKER: Flicker,
-	Component.Type.SLOGGER: Slogger
+	Component.Type.SLOGGER: Slogger,
+	Component.Type.LAMP: Lamp
 }
 
 
