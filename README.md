@@ -24,7 +24,8 @@ Right below the top bar you will find an overlayed bar with different options:
 - The wire color picker will let you choose how the cables will be displayed when powered. It is recommended to set it to a bright color different than the background color.
 - The TPS input will let you change how fast the simulation performs, measured in Ticks Per Second (TPS). This determines how long components with delay will wait before updating their outputs
 - The eraser symbol lets you change between erase mode and draw mode. This lets you remove components from the grid. The shortcut for this button is **E**
-- The overwrite mode will determine if you will replace current components of the grid when drawing over them. If true, any component in the grid will be replaced by the component of your choice when drawing on that tile, otherwise it will simply not draw anything.
+- The Wire Upd. toggle will enable and disable visual updates for wires. They will still work system wise as always, but the changes won't be visible. Use this if your project contains a very big circuits with very frequent updates that visibly slow down the program.
+- The overwrite toggle will determine if you will replace current components of the grid when drawing over them. If true, any component in the grid will be replaced by the component of your choice when drawing on that tile, otherwise it will simply not draw anything.
 
 All settings except eraser mode will be saved to your project
 
