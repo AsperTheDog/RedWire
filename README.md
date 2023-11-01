@@ -24,7 +24,8 @@ Right below the top bar you will find an overlayed bar with different options:
 - The wire color picker will let you choose how the cables will be displayed when powered. It is recommended to set it to a bright color different than the background color.
 - The TPS input will let you change how fast the simulation performs, measured in Ticks Per Second (TPS). This determines how long components with delay will wait before updating their outputs
 - The eraser symbol lets you change between erase mode and draw mode. This lets you remove components from the grid. The shortcut for this button is **E**
-- The overwrite mode will determine if you will replace current components of the grid when drawing over them. If true, any component in the grid will be replaced by the component of your choice when drawing on that tile, otherwise it will simply not draw anything.
+- The Wire Upd. toggle will enable and disable visual updates for wires. They will still work system wise as always, but the changes won't be visible. Use this if your project contains a very big circuits with very frequent updates that visibly slow down the program.
+- The overwrite toggle will determine if you will replace current components of the grid when drawing over them. If true, any component in the grid will be replaced by the component of your choice when drawing on that tile, otherwise it will simply not draw anything.
 
 All settings except eraser mode will be saved to your project
 
@@ -44,37 +45,37 @@ This component is completely passive. It will simply transmit the strongest inte
 Wires cannot be prevented from sticking to other elements around it.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/ac00c599-8951-465d-a829-5a43f3166971' width='300'>
 
-## Repeater
+### Repeater
 This component has one signal input and one output. When the input receives a signal intensity greater than zero, a repeater will output a signal intensity of 15 after a specific amount of ticks. The amount of ticks can be modified to go from 1 to 4 by interacting with the component. The amount of ticks is reperesented by the yellow lines on the side.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/3057d14b-b7c6-4ea5-9e93-40af9c31546f' width='300'>
 
-## Comparator
+### Comparator
 This component has three inputs and one output. A comparator differentiates its inputs to the side (side input) from the one directly behind it (back input). The output of the comparator will have to different behaviors depending on its mode, which can be toggled by interacting with it:
  - In comparison mode (yellow light off) the comparator will output a signal if the back input has a greater signal intensity than any of the side inputs. The intensity of the output will be equal to the intensity of the back input: `output = back if (left ≤ back and right ≤ back) else 0`
  - In substraction mode (yellow light on) the comparator will output a signal equal to the back input minus the greatest signal out of the two sides: `output = back - max(0, back - max(right, left))`
 The comparator has an unavoidable one tick delay.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/288027d0-21c7-4619-a3e3-180514c66bfa' width='300'>
 
-## Negator
+### Negator
 This component has one signal input and one output. When the input receives a signal intensity of zero, a negator will output a signal of 15. If it otherwise receives a signal greater than zero, it will output a signal intensity of zero. The negator has an unmodifiable one tick delay.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/551d392e-08ec-469e-a784-6031a4676a7c' width='300'>
 
-## Generator
+### Generator
 This component acts as the user controlled power source. It has an omnidirectional output that will release a signal strength of 15 on demand. It can be turned on or off by interacting with it.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/5d0ff666-0922-4b5b-bdff-74bea3c8bd68' width='300'>
 
-## Crossing
+### Crossing
 This component acts the same way as a wire but with two independent lines in the vertical and horizontal axis respectively. Power intensities that affect one line will not be affected by the other.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/f01e8d34-5519-44d9-aa58-ea27b87de5c6' width='300'>
 
-## Flicker
+### Flicker
 This component has one signal input and one output. The flicker will quickly signal a one tick pulse with an intensity of 15 whenever the input signal changes from 0 to more than 0 or vice-versa. The flicker has an unavoidable one tick delay.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/9d3d2f67-2a4a-465c-aae3-5d72213c3dcf' width='300'>
 
-## Slogger
+### Slogger
 The slogger has one signal input and one output. The output of the slogger will only change from a power intensity of 15 to that of a 0, alternating only when the input changed from 0 to any value higher than 0. The slogger has an unavoidable one tick delay.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/7c647302-cc4e-4f87-97af-212b6234e437' width='300'>
 
-## Lamp
+### Lamp
 A lamp only has one omnidirectional input. It will light up when a signal bigger than zero and remain off otherwise. It does not transmit signal to any other neighbor component.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/f3fd1b81-5b3d-451d-810a-7f5d4200609f' width='300'>
