@@ -807,6 +807,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="PopupLayer" type="CanvasLayer" parent="."]
+layer = 128
 visible = false
 
 [node name="ColorRect" type="ColorRect" parent="PopupLayer"]
@@ -960,6 +961,35 @@ text = "Cancel"
 layout_mode = 2
 theme_override_colors/default_color = Color(1, 0.505882, 0.396078, 1)
 fit_content = true
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="PopupLayer/ColorRect/load/Margin/VCont"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0.823529, 0.647059, 0, 1)
+fit_content = true
+
+[node name="NotifLayer" type="CanvasLayer" parent="."]
+layer = 10
+visible = false
+
+[node name="PanelContainer" type="PanelContainer" parent="NotifLayer"]
+anchors_preset = -1
+anchor_left = 0.01
+anchor_top = 0.92
+anchor_right = 0.231
+anchor_bottom = 0.981
+offset_left = 0.48
+offset_top = -0.160034
+offset_right = -0.112
+offset_bottom = 0.311951
+grow_vertical = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NotifLayer/PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+bbcode_enabled = true
+text = "[center] You have unsaved changes"
+fit_content = true
+autowrap_mode = 0
 
 [connection signal="pressed" from="UILayer/Drawer/TextureButton" to="." method="toggleDrawer"]
 [connection signal="text_submitted" from="UILayer/Control/MarginContainer/HBoxContainer/LineEdit" to="." method="TPSChanged"]

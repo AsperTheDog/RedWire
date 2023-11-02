@@ -106,6 +106,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("interact"):
 		if not isTileEmpty(lastMousePos):
 			world[lastMousePos].interact()
+		Game.isEditDirty = true
 	if Input.is_action_just_pressed("rotate"):
 		Game.placingRotation = (Game.placingRotation + 1) % Side.ALL
 
@@ -129,6 +130,7 @@ func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
 		elem.die()
 		notifyNeighbors(pos)
 		cleanAllLayersAt(pos)
+		Game.isEditDirty = true
 		return
 	if pos in world:
 		world[pos].die()
@@ -136,6 +138,7 @@ func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
 	cleanAllLayersAt(pos)
 	updateTextures(Layer.ALL, pos)
 	notifyNeighbors(pos)
+	Game.isEditDirty = true
 
 
 func notifyNeighbors(pos: Vector2i):

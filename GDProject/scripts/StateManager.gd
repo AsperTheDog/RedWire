@@ -7,10 +7,17 @@ signal overwriteChanged(overwrite: bool)
 signal rotationChanged(rotation: int)
 signal eraserToggled(active: bool)
 signal wireDisplayUpdated(doUpdate: bool)
+signal editDirtyChanged(dirty: bool)
 
 var world: World = null
 
 var savePath: String = ""
+
+var isEditDirty: bool = false:
+	set(value):
+		if isEditDirty == value: return
+		isEditDirty = value
+		editDirtyChanged.emit(value)
 
 var bgColor: Color = Color.DARK_BLUE:
 	set(value):
@@ -62,6 +69,7 @@ func saveProject() -> bool:
 			"meta": world.world[elem].getMeta()
 		}
 	file.store_var(data)
+	Game.isEditDirty = false
 	return true
 
 
@@ -77,4 +85,5 @@ func loadProject(path: String) -> bool:
 	for pos in data:
 		world.placeComponent(data[pos]["type"], pos, data[pos]["rot"])
 		world.world[pos].applyMeta(data[pos]["meta"])
+	Game.isEditDirty = false
 	return true

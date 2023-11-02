@@ -24,6 +24,7 @@ func _ready() -> void:
 	Game.wireChanged.connect(onWireColorChange)
 	Game.bgChanged.connect(onBGColorChange)
 	Game.rotationChanged.connect(onRotationChange)
+	Game.editDirtyChanged.connect(func(value): $NotifLayer.visible = value)
 	for buttKey in gridButtons:
 		var butt = gridButtons[buttKey]
 		butt.mouse_entered.connect(func(): butt.get_node("../../hover").show())
@@ -47,6 +48,8 @@ func _process(delta: float):
 	if Input.is_action_just_pressed("erase") and not $PopupLayer.visible:
 		var butt: TextureButton = $UILayer/Control/MarginContainer/HBoxContainer/TextureRect/eraser
 		butt.button_pressed = not butt.button_pressed
+	if Input.is_action_just_pressed("save") and not $PopupLayer.visible:
+		fileIndexPressed(0)
 
 
 func updatePressedButton(pressed: Component.Type):
@@ -116,8 +119,8 @@ func openSaveProject():
 	$PopupLayer/ColorRect/new/Margin/VCont/FileInput/LineEdit.text = ""
 	$PopupLayer.show()
 	$PopupLayer/ColorRect/new.show()
-	if Game.savePath != "":
-		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel2.text = "Unsaved changed in your current project will be lost!"
+	if Game.savePath != "" and Game.isEditDirty:
+		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel2.text = "Unsaved changes in your current project will be lost!"
 	else:
 		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel2.text = ""
 	
@@ -134,6 +137,10 @@ func openLoadProject():
 	$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel2.text = ""
 	$PopupLayer.show()
 	$PopupLayer/ColorRect/load.show()
+	if Game.isEditDirty:
+		$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel3.text = "Unsaved changes will be lost!"
+	else:
+		$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel3.text = ""
 
 
 func onLoadFilePressed() -> void:
