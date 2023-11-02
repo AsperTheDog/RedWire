@@ -152,3 +152,11 @@ func propagateRegenRequest():
 
 func interact():
 	pass
+
+
+func getMeta():
+	return []
+
+
+func applyMeta(meta: Array):
+	pass

@@ -91,3 +91,11 @@ func interact():
 	ticks += 1
 	ticks = max(1, ticks % 5)
 	Game.world.updateTextures(World.Layer.MACHINE, pos)
+
+
+func getMeta():
+	return [ticks]
+
+
+func applyMeta(meta: Array):
+	ticks = meta[0]

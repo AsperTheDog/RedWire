@@ -70,7 +70,7 @@ func requestRegen():
 
 
 func getType() -> Type:
-	return Type.REPEATER
+	return Type.SLOGGER
 
 
 func isEqual(other: Component):

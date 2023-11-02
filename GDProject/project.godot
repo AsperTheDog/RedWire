@@ -28,6 +28,7 @@ gdscript/warnings/shadowed_variable_base_class=0
 
 [display]
 
+window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

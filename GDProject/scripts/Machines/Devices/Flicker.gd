@@ -69,7 +69,7 @@ func requestRegen():
 
 
 func getType() -> Type:
-	return Type.REPEATER
+	return Type.FLICKER
 
 
 func isEqual(other: Component):

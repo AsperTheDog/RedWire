@@ -806,7 +806,171 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="PopupLayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="PopupLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.647059)
+
+[node name="new" type="PanelContainer" parent="PopupLayer/ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.28
+anchor_top = 0.397
+anchor_right = 0.721
+anchor_bottom = 0.639
+offset_left = -0.559998
+offset_top = 0.743988
+offset_right = 0.407959
+offset_bottom = -0.072052
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="PopupLayer/ColorRect/new"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VCont" type="VBoxContainer" parent="PopupLayer/ColorRect/new/Margin"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PopupLayer/ColorRect/new/Margin/VCont"]
+layout_mode = 2
+text = "New project"
+fit_content = true
+
+[node name="FileInput" type="HBoxContainer" parent="PopupLayer/ColorRect/new/Margin/VCont"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="PopupLayer/ColorRect/new/Margin/VCont/FileInput"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="file" type="Button" parent="PopupLayer/ColorRect/new/Margin/VCont/FileInput"]
+layout_mode = 2
+text = "Select file"
+
+[node name="FileDialog" type="FileDialog" parent="PopupLayer/ColorRect/new/Margin/VCont/FileInput/file"]
+title = "Select project path"
+initial_position = 1
+size = Vector2i(600, 600)
+ok_button_text = "Save"
+access = 2
+filters = PackedStringArray("*.rw ; RedWire Project Files")
+
+[node name="Buttons" type="HBoxContainer" parent="PopupLayer/ColorRect/new/Margin/VCont"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="save" type="Button" parent="PopupLayer/ColorRect/new/Margin/VCont/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Save"
+
+[node name="cancel" type="Button" parent="PopupLayer/ColorRect/new/Margin/VCont/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Cancel"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PopupLayer/ColorRect/new/Margin/VCont"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0.823529, 0.647059, 0, 1)
+fit_content = true
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="PopupLayer/ColorRect/new/Margin/VCont"]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 0.505882, 0.396078, 1)
+fit_content = true
+
+[node name="load" type="PanelContainer" parent="PopupLayer/ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.28
+anchor_top = 0.397
+anchor_right = 0.721
+anchor_bottom = 0.639
+offset_left = -0.559998
+offset_top = 0.743988
+offset_right = 0.407959
+offset_bottom = -0.072052
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="PopupLayer/ColorRect/load"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VCont" type="VBoxContainer" parent="PopupLayer/ColorRect/load/Margin"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PopupLayer/ColorRect/load/Margin/VCont"]
+layout_mode = 2
+text = "Load project"
+fit_content = true
+
+[node name="FileInput" type="HBoxContainer" parent="PopupLayer/ColorRect/load/Margin/VCont"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="PopupLayer/ColorRect/load/Margin/VCont/FileInput"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="file" type="Button" parent="PopupLayer/ColorRect/load/Margin/VCont/FileInput"]
+layout_mode = 2
+text = "Select file"
+
+[node name="FileDialog" type="FileDialog" parent="PopupLayer/ColorRect/load/Margin/VCont/FileInput/file"]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(600, 600)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.rw ; RedWire Project Files")
+
+[node name="Buttons" type="HBoxContainer" parent="PopupLayer/ColorRect/load/Margin/VCont"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="load" type="Button" parent="PopupLayer/ColorRect/load/Margin/VCont/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Load"
+
+[node name="cancel" type="Button" parent="PopupLayer/ColorRect/load/Margin/VCont/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "Cancel"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PopupLayer/ColorRect/load/Margin/VCont"]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 0.505882, 0.396078, 1)
+fit_content = true
+
 [connection signal="pressed" from="UILayer/Drawer/TextureButton" to="." method="toggleDrawer"]
 [connection signal="text_submitted" from="UILayer/Control/MarginContainer/HBoxContainer/LineEdit" to="." method="TPSChanged"]
 [connection signal="toggled" from="UILayer/Control/MarginContainer/HBoxContainer/TextureRect/eraser" to="." method="eraserToggled"]
 [connection signal="toggled" from="UILayer/Control/MarginContainer/HBoxContainer/DisplayWire" to="." method="toggleWireDisplay"]
+[connection signal="index_pressed" from="UILayer/Panel/MenuBar/File" to="." method="fileIndexPressed"]
+[connection signal="pressed" from="PopupLayer/ColorRect/new/Margin/VCont/FileInput/file" to="." method="onNewFilePressed"]
+[connection signal="file_selected" from="PopupLayer/ColorRect/new/Margin/VCont/FileInput/file/FileDialog" to="." method="onNewFileDialogConfirmed"]
+[connection signal="pressed" from="PopupLayer/ColorRect/new/Margin/VCont/Buttons/save" to="." method="openNewProject"]
+[connection signal="pressed" from="PopupLayer/ColorRect/new/Margin/VCont/Buttons/cancel" to="." method="closeNewDialog"]
+[connection signal="pressed" from="PopupLayer/ColorRect/load/Margin/VCont/FileInput/file" to="." method="onLoadFilePressed"]
+[connection signal="file_selected" from="PopupLayer/ColorRect/load/Margin/VCont/FileInput/file/FileDialog" to="." method="onLoadFileDialogConfirmed"]
+[connection signal="pressed" from="PopupLayer/ColorRect/load/Margin/VCont/Buttons/load" to="." method="loadProject"]
+[connection signal="pressed" from="PopupLayer/ColorRect/load/Margin/VCont/Buttons/cancel" to="." method="closeLoadDialog"]

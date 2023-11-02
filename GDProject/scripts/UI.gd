@@ -42,9 +42,9 @@ func _ready() -> void:
 
 
 func _process(delta: float):
-	if Input.is_action_just_pressed("drawer"):
+	if Input.is_action_just_pressed("drawer") and not $PopupLayer.visible:
 		toggleDrawer()
-	if Input.is_action_just_pressed("erase"):
+	if Input.is_action_just_pressed("erase") and not $PopupLayer.visible:
 		var butt: TextureButton = $UILayer/Control/MarginContainer/HBoxContainer/TextureRect/eraser
 		butt.button_pressed = not butt.button_pressed
 
@@ -99,3 +99,76 @@ func eraserToggled(active: bool) -> void:
 
 func toggleWireDisplay(active: bool) -> void:
 	Game.updateWires = active
+
+
+func fileIndexPressed(index: int) -> void:
+	if index == 0 and Game.savePath == "": index = 3
+	match index:
+		0:
+			Game.saveProject()
+		1:
+			openLoadProject()
+		3:
+			openSaveProject()
+
+
+func openSaveProject():
+	$PopupLayer/ColorRect/new/Margin/VCont/FileInput/LineEdit.text = ""
+	$PopupLayer.show()
+	$PopupLayer/ColorRect/new.show()
+	if Game.savePath != "":
+		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel2.text = "Unsaved changed in your current project will be lost!"
+	else:
+		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel2.text = ""
+	
+func onNewFilePressed() -> void:
+	$PopupLayer/ColorRect/new/Margin/VCont/FileInput/file/FileDialog.show()
+
+
+func onNewFileDialogConfirmed(path: String) -> void:
+	$PopupLayer/ColorRect/new/Margin/VCont/FileInput/LineEdit.text = path
+
+
+func openLoadProject():
+	$PopupLayer/ColorRect/load/Margin/VCont/FileInput/LineEdit.text = ""
+	$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel2.text = ""
+	$PopupLayer.show()
+	$PopupLayer/ColorRect/load.show()
+
+
+func onLoadFilePressed() -> void:
+	$PopupLayer/ColorRect/load/Margin/VCont/FileInput/file/FileDialog.show()
+	$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel2.text = ""
+
+
+func onLoadFileDialogConfirmed(path: String) -> void:
+	$PopupLayer/ColorRect/load/Margin/VCont/FileInput/LineEdit.text = path
+
+
+func openNewProject():
+	if Game.savePath != "":
+		Game.world.empty()
+	Game.savePath = $PopupLayer/ColorRect/new/Margin/VCont/FileInput/LineEdit.text
+	if not Game.saveProject():
+		$PopupLayer/ColorRect/new/Margin/VCont/RichTextLabel3.text = "Invalid file path"
+		return
+	get_window().title = Game.savePath.split("/")[-1].trim_suffix(".rw")
+	closeNewDialog()
+
+
+func loadProject():
+	if not Game.loadProject($PopupLayer/ColorRect/load/Margin/VCont/FileInput/LineEdit.text):
+		$PopupLayer/ColorRect/load/Margin/VCont/RichTextLabel2.text = "Error while loading project"
+		return
+	get_window().title = Game.savePath.split("/")[-1].trim_suffix(".rw")
+	closeLoadDialog()
+
+
+func closeNewDialog():
+	$PopupLayer/ColorRect/new.hide()
+	$PopupLayer.hide()
+
+
+func closeLoadDialog():
+	$PopupLayer/ColorRect/load.hide()
+	$PopupLayer.hide()

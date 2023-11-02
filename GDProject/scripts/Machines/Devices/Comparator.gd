@@ -92,7 +92,7 @@ func requestRegen():
 
 
 func getType() -> Type:
-	return Type.REPEATER
+	return Type.COMPARATOR
 
 
 func isEqual(other: Component):
@@ -113,3 +113,11 @@ func interact():
 	substractMode = not substractMode
 	onPowerUpdate(0)
 	Game.world.updateTextures(World.Layer.MACHINE, pos)
+
+
+func getMeta():
+	return [substractMode]
+
+
+func applyMeta(meta: Array):
+	substractMode = meta[0]

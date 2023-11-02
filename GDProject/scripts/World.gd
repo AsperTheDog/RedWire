@@ -86,6 +86,13 @@ func isTileEmpty(pos: Vector2i):
 	return not pos in world
 
 
+func empty():
+	for pos in world:
+		cleanAllLayersAt(pos)
+	world.clear()
+	
+
+
 # --- NAVIGATION ---
 
 

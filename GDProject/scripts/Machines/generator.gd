@@ -98,3 +98,10 @@ func getOutputs() -> Array[Component]:
 			neighbors[side] = currentTile
 	return neighbors
 
+
+func getMeta():
+	return [activated]
+
+
+func applyMeta(meta: Array):
+	activated = meta[0]
