@@ -96,8 +96,11 @@ func empty():
 # --- NAVIGATION ---
 
 
+var origMouse: Vector2 = Vector2.ZERO
 var lastMousePos: Vector2i = Vector2i.ZERO
 var dragging: bool = false
+var horiz: bool = false
+var vert: bool = false
 
 
 func _process(delta: float) -> void:
@@ -109,6 +112,16 @@ func _process(delta: float) -> void:
 		Game.isEditDirty = true
 	if Input.is_action_just_pressed("rotate"):
 		Game.placingRotation = (Game.placingRotation + 1) % Side.ALL
+	if Input.is_action_just_pressed("snap_horiz"):
+		origMouse = get_viewport().get_mouse_position()
+		horiz = true
+	elif Input.is_action_just_released("snap_horiz"):
+		horiz = false
+	if Input.is_action_just_pressed("snap_vert"):
+		origMouse = get_viewport().get_mouse_position()
+		vert = true
+	elif Input.is_action_just_released("snap_vert"):
+		vert = false
 
 
 func updateDragging():
@@ -159,7 +172,13 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var halfSize := get_viewport_rect().size / 2
 		removeOverlay(lastMousePos)
-		lastMousePos = local_to_map(to_local((event.position - halfSize) / owner.getCurrentZoom()))
+		var pos = event.position
+		if horiz:
+			pos.x = origMouse.x
+		if vert:
+			pos.y = origMouse.y
+		lastMousePos = local_to_map(to_local((pos - halfSize) / owner.getCurrentZoom()))
+			
 		placeOverlay(lastMousePos)
 
 

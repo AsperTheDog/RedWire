@@ -10,7 +10,6 @@ var moving: bool = false:
 var origMouse: Vector2 = Vector2.ZERO
 var origWorld: Vector2 = Vector2.ZERO
 
-
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("zoom_up"):
 		$Camera2D.zoom *= 1.1

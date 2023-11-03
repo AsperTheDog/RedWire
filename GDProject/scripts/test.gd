@@ -4,7 +4,6 @@ var amount: int = 500
 var times: Array[float] = []
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.world.placeComponent(Component.Type.GENERATOR, Vector2i(0, 0), Side.UP)
 	for x in 33:
