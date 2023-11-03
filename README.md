@@ -10,6 +10,8 @@ A simple top to down application to play around with circuits inspired on the Re
  - **Interact:** When pressing right click on top of a component, you will change its state (if aplicable)
  - **Erase:** Pressing E will toggle eraser mode, allowing you to remove components
  - **Hide Drawer:** Pressing space will automatically hide or show the drawer with the components
+ - **Vertical snap:** Holding V will snap the pointer to the vertical axis, allowing you to draw stright horizontal lines
+ - **Horizontal snap:** Holding H will snap the pointer to the horizontal axis, allowing you to draw straight vertical lines
 
 
 ![Screenshot 2023-11-01 144416](https://github.com/AsperTheDog/WireBug/assets/45227294/eb64a21e-94a8-40db-8a64-6cfcda2307fb)
