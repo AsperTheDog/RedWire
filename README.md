@@ -43,7 +43,7 @@ Each component will react in different ways to changes in either other component
 There are 9 types of components:
 
 ### Wire
-This component is completely passive. It will simply transmit the strongest intensity going inwards towards all other elements around it. Every time any amount of power intensity enters the cable it will be reduced by one level
+This component is completely passive. It will simply transmit the strongest intensity going inwards towards all other elements around it. Every time any amount of power intensity enters the cable it will be reduced by one level.
 Wires cannot be prevented from sticking to other elements around it.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/ac00c599-8951-465d-a829-5a43f3166971' width='300'>
 
