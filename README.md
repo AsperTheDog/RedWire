@@ -85,7 +85,7 @@ A lamp only has one omnidirectional input. It will light up when a signal bigger
 
 ## Example
 Here there is a quick showcase of a circuit made in the program, this example is a full adder of 2 numbers (of 2-bit size each) into a 3-bit number.
-The generators on the top left of the circuit are the inputs (each generator is a bit) and the three lamps are the output
+The generators on the top left of the circuit are the inputs (each generator is a bit where LSB is on top) and the three lamps are the output
 
 https://github.com/AsperTheDog/RedWire/assets/45227294/a2b78bfe-6760-4b54-9e18-4b95dee74c67
 
