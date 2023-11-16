@@ -81,3 +81,11 @@ The slogger has one signal input and one output. The output of the slogger will 
 ### Lamp
 A lamp only has one omnidirectional input. It will light up when a signal bigger than zero and remain off otherwise. It does not transmit signal to any other neighbor component.  
 <img src='https://github.com/AsperTheDog/WireBug/assets/45227294/f3fd1b81-5b3d-451d-810a-7f5d4200609f' width='300'>
+
+
+## Example
+Here there is a quick showcase of a circuit made in the program, this example is a full adder of 2 numbers (of 2-bit size each) into a 3-bit number.
+The generators on the top left of the circuit are the inputs (each generator is a bit) and the three lamps are the output
+
+https://github.com/AsperTheDog/RedWire/assets/45227294/a2b78bfe-6760-4b54-9e18-4b95dee74c67
+
