@@ -47,15 +47,15 @@ func getNeighborAt(side: int) -> Component:
 func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			Game.world.set_cell(layer, pos, 1, Vector2i(1 if substractMode else 0, 1), rot)
+			Game.world.setCell(layer, pos, 1, Vector2i(1 if substractMode else 0, 1), rot)
 		World.Layer.REDSTONE1:
-			Game.world.set_cell(layer, pos, 3, Vector2i(0, 1), rot * 16 + 15 - inputs[0].power)
+			Game.world.setCell(layer, pos, 3, Vector2i(0, 1), rot * 16 + 15 - inputs[0].power)
 		World.Layer.REDSTONE2:
-			Game.world.set_cell(layer, pos, 3, Vector2i(1, 1), rot * 16 + 15 - output)
+			Game.world.setCell(layer, pos, 3, Vector2i(1, 1), rot * 16 + 15 - output)
 		World.Layer.REDSTONE3:
-			Game.world.set_cell(layer, pos, 3, Vector2i(2, 1), Side.opposite[rot] * 16 + 15 - inputs[1].power)
+			Game.world.setCell(layer, pos, 3, Vector2i(2, 1), Side.opposite[rot] * 16 + 15 - inputs[1].power)
 		World.Layer.REDSTONE4:
-			Game.world.set_cell(layer, pos, 3, Vector2i(2, 1), rot * 16 + 15 - inputs[2].power)
+			Game.world.setCell(layer, pos, 3, Vector2i(2, 1), rot * 16 + 15 - inputs[2].power)
 
 
 func onPowerUpdate(id :int):

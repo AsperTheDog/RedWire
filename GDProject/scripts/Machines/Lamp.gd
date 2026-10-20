@@ -19,7 +19,7 @@ func isConnectedAt(dir: int) -> bool:
 
 func updateTileAtLayer(layer: World.Layer):
 	if layer != World.Layer.MACHINE: return
-	Game.world.set_cell(layer, pos, 1, Vector2i(int(inputs[0].power > 0), 7), 0)
+	Game.world.setCell(layer, pos, 1, Vector2i(int(inputs[0].power > 0), 7), 0)
 
 
 func onPowerUpdate(id :int):

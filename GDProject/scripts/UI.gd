@@ -78,8 +78,9 @@ func onWireColorChange(color: Color):
 			child.self_modulate = color
 
 
-func onBGColorChange(color: Color):
-	$BackgroundLayer/ColorRect.color = color
+func onBGColorChange(_color: Color):
+	# The picked color is drawn by World inside the grid, everything outside the grid stays black
+	$BackgroundLayer/ColorRect.color = Color.BLACK
 
 
 func onRotationChange(rot: int):

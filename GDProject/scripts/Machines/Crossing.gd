@@ -32,11 +32,11 @@ func getNeighbors(from: int) -> Array[Component]:
 func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			Game.world.set_cell(layer, pos, 1, Vector2i(0, 4), rot)
+			Game.world.setCell(layer, pos, 1, Vector2i(0, 4), rot)
 		World.Layer.REDSTONE1:
-			Game.world.set_cell(layer, pos, 3, Vector2i(0, 4), rot * 16 + 15 - inputs[1].power)
+			Game.world.setCell(layer, pos, 3, Vector2i(0, 4), rot * 16 + 15 - inputs[1].power)
 		World.Layer.REDSTONE2:
-			Game.world.set_cell(layer, pos, 3, Vector2i(1, 4), rot * 16 + 15 - inputs[0].power)
+			Game.world.setCell(layer, pos, 3, Vector2i(1, 4), rot * 16 + 15 - inputs[0].power)
 
 
 func onPowerUpdate(id :int):

@@ -62,16 +62,16 @@ func updateTileAtLayer(layer: World.Layer):
 		var conn = Game.world.isTileConnectedAt(pos + Side.vectors[side], Side.opposite[side])
 		if conn: code += 1 << side
 	var tilePos = wireLayout[code]
-	Game.world.set_cell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - inputs[0].power)
+	Game.world.setCell(layer, pos, 2, Vector2i(tilePos.x, tilePos.y), tilePos.z + 15 - inputs[0].power)
 
 
 func onPowerUpdate(id :int):
-	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+	Game.world.setPower(World.Layer.REDSTONE1, pos, inputs[0].power)
 
 
 func onNeighborChanged(side: int):
-	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
 	propagateRegenRequest()
+	Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
 
 
 func getType() -> Type:

@@ -32,11 +32,11 @@ func getOutputs():
 func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			Game.world.set_cell(layer, pos, 1, Vector2i(0, 2), rot)
+			Game.world.setCell(layer, pos, 1, Vector2i(0, 2), rot)
 		World.Layer.REDSTONE1:
-			Game.world.set_cell(layer, pos, 3, Vector2i(1, 2), rot * 16 + 15 - (15 if isPowered else 0))
+			Game.world.setCell(layer, pos, 3, Vector2i(1, 2), rot * 16 + 15 - (15 if isPowered else 0))
 		World.Layer.REDSTONE2:
-			Game.world.set_cell(layer, pos, 3, Vector2i(0, 2), rot * 16 + 15 - (0 if isPowered else 15))
+			Game.world.setCell(layer, pos, 3, Vector2i(0, 2), rot * 16 + 15 - (0 if isPowered else 15))
 
 
 func onPowerUpdate(id :int):

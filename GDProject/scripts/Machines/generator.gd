@@ -50,9 +50,9 @@ func isConnectedAt(dir: int) -> bool:
 func updateTileAtLayer(layer: World.Layer):
 	match layer:
 		World.Layer.MACHINE:
-			Game.world.set_cell(layer, pos, 1, Vector2i(1 if activated else 0, 3), 0)
+			Game.world.setCell(layer, pos, 1, Vector2i(1 if activated else 0, 3), 0)
 		World.Layer.REDSTONE1:
-			Game.world.set_cell(layer, pos, 3, Vector2i(0, 3), 0 + 15 - (15 if activated else 0))
+			Game.world.setCell(layer, pos, 3, Vector2i(0, 3), 0 + 15 - (15 if activated else 0))
 
 
 func interact():

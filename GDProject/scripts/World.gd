@@ -1,4 +1,4 @@
-extends TileMap
+extends Node2D
 class_name World
 
 
@@ -12,7 +12,27 @@ enum Layer {
 	ALL
 }
 
+const GRID_SIZE: int = 1024
+const GRID_HALF: int = GRID_SIZE / 2
+const POWER_SHADER: Shader = preload("res://tiles/power.gdshader")
+
 var world: Dictionary = {}
+
+var powerData: PackedByteArray = PackedByteArray()
+var powerImage: Image
+var powerTexture: ImageTexture
+var powerDirty: bool = false
+
+var gridBackground: ColorRect
+
+@onready var layers: Array[TileMapLayer] = [
+	$Machines,
+	$Redstone1,
+	$Redstone2,
+	$Redstone3,
+	$Redstone4,
+	$Overlay
+]
 
 static var componentClasses: Dictionary = {
 	Component.Type.WIRE: Wire,
@@ -32,17 +52,97 @@ func _ready():
 	Game.wireChanged.connect(updateWireColor)
 	Game.eraserToggled.connect(onEraserToggle)
 	updateWireColor(Game.wireColor)
+	setupPowerTexture()
+	setupGridBackground()
+	set_notify_transform(true)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSFORM_CHANGED and powerTexture != null:
+		updateShaderOrigin()
+
+
+func setupPowerTexture():
+	powerData.resize(GRID_SIZE * GRID_SIZE * 4)
+	powerData.fill(0)
+	powerImage = Image.create_empty(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RGBA8)
+	powerTexture = ImageTexture.create_from_image(powerImage)
+	var tileSize := Vector2(layers[Layer.MACHINE].tile_set.tile_size)
+	for layer in range(Layer.REDSTONE1, Layer.REDSTONE4 + 1):
+		var mat := ShaderMaterial.new()
+		mat.shader = POWER_SHADER
+		mat.set_shader_parameter("powerTex", powerTexture)
+		mat.set_shader_parameter("channel", layer - Layer.REDSTONE1)
+		mat.set_shader_parameter("tileSize", tileSize)
+		mat.set_shader_parameter("gridSize", float(GRID_SIZE))
+		layers[layer].use_parent_material = false
+		layers[layer].material = mat
+	updateShaderOrigin()
+
+
+func updateShaderOrigin():
+	for layer in range(Layer.REDSTONE1, Layer.REDSTONE4 + 1):
+		(layers[layer].material as ShaderMaterial).set_shader_parameter("origin", global_position)
+
+
+func setupGridBackground():
+	var tileSize := Vector2(layers[Layer.MACHINE].tile_set.tile_size)
+	gridBackground = ColorRect.new()
+	gridBackground.position = -tileSize * GRID_HALF
+	gridBackground.size = tileSize * GRID_SIZE
+	gridBackground.z_index = -1
+	gridBackground.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gridBackground.color = Game.bgColor
+	add_child(gridBackground)
+	Game.bgChanged.connect(func(color: Color): gridBackground.color = color)
+
+
+func isInBounds(pos: Vector2i) -> bool:
+	return pos.x >= -GRID_HALF and pos.x < GRID_HALF and pos.y >= -GRID_HALF and pos.y < GRID_HALF
+
+
+func setPower(layer: Layer, pos: Vector2i, power: int):
+	if not isInBounds(pos): return
+	var idx := ((pos.y + GRID_HALF) * GRID_SIZE + pos.x + GRID_HALF) * 4 + layer - Layer.REDSTONE1
+	var value := power * 17
+	if powerData[idx] == value: return
+	powerData[idx] = value
+	powerDirty = true
+
+
+func flushPower():
+	if not powerDirty: return
+	powerDirty = false
+	powerImage.set_data(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RGBA8, powerData)
+	powerTexture.update(powerImage)
 
 
 func updateWireColor(color: Color):
-	set_layer_modulate(Layer.REDSTONE1, color)
-	set_layer_modulate(Layer.REDSTONE2, color)
-	set_layer_modulate(Layer.REDSTONE3, color)
-	set_layer_modulate(Layer.REDSTONE4, color)
+	layers[Layer.REDSTONE1].modulate = color
+	layers[Layer.REDSTONE2].modulate = color
+	layers[Layer.REDSTONE3].modulate = color
+	layers[Layer.REDSTONE4].modulate = color
 
 
 func onEraserToggle(active: bool):
-	set_layer_modulate(Layer.OVERLAY, Color(1.0, 0.5, 0.5, 0.35) if active else Color(1.0, 1.0, 1.0, 0.35))
+	layers[Layer.OVERLAY].modulate = Color(1.0, 0.5, 0.5, 0.35) if active else Color(1.0, 1.0, 1.0, 0.35)
+
+
+func isRedstoneLayer(layer: Layer) -> bool:
+	return layer >= Layer.REDSTONE1 and layer <= Layer.REDSTONE4
+
+
+func setCell(layer: Layer, pos: Vector2i, source: int, atlasCoords: Vector2i, alternative: int):
+	if isRedstoneLayer(layer):
+		setPower(layer, pos, 15 - (alternative & 15))
+		alternative &= ~15
+	layers[layer].set_cell(pos, source, atlasCoords, alternative)
+
+
+func eraseCell(layer: Layer, pos: Vector2i):
+	if isRedstoneLayer(layer):
+		setPower(layer, pos, 0)
+	layers[layer].erase_cell(pos)
 
 
 func getTileAt(pos: Vector2i) -> Component:
@@ -69,17 +169,17 @@ func updateTextures(layer: Layer, pos: Vector2i):
 		updateTextures(Layer.REDSTONE4, pos)
 		return
 	if pos not in world:
-		erase_cell(layer, pos)
+		eraseCell(layer, pos)
 	else:
 		world[pos].updateTileAtLayer(layer)
 
 
 func cleanAllLayersAt(pos: Vector2i):
-	erase_cell(Layer.MACHINE, pos)
-	erase_cell(Layer.REDSTONE1, pos)
-	erase_cell(Layer.REDSTONE2, pos)
-	erase_cell(Layer.REDSTONE3, pos)
-	erase_cell(Layer.REDSTONE4, pos)
+	eraseCell(Layer.MACHINE, pos)
+	eraseCell(Layer.REDSTONE1, pos)
+	eraseCell(Layer.REDSTONE2, pos)
+	eraseCell(Layer.REDSTONE3, pos)
+	eraseCell(Layer.REDSTONE4, pos)
 
 
 func isTileEmpty(pos: Vector2i):
@@ -104,6 +204,7 @@ var vert: bool = false
 
 
 func _process(delta: float) -> void:
+	flushPower()
 	if dragging:
 		updateDragging()
 	if Input.is_action_just_pressed("interact"):
@@ -134,6 +235,7 @@ func updateDragging():
 
 
 func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
+	if not isInBounds(pos): return
 	if pos in world and world[pos].isEqualToNew(type): return
 	if type == Component.Type.NONE:
 		if pos not in world:
@@ -161,11 +263,11 @@ func notifyNeighbors(pos: Vector2i):
 
 
 func placeOverlay(pos: Vector2i):
-	set_cell(Layer.OVERLAY as int, pos, 0, Vector2i.ZERO, 0)
+	setCell(Layer.OVERLAY, pos, 0, Vector2i.ZERO, 0)
 
 
 func removeOverlay(pos: Vector2i):
-	erase_cell(Layer.OVERLAY as int, pos)
+	eraseCell(Layer.OVERLAY, pos)
 
 
 func _input(event: InputEvent) -> void:
@@ -177,7 +279,7 @@ func _input(event: InputEvent) -> void:
 			pos.x = origMouse.x
 		if vert:
 			pos.y = origMouse.y
-		lastMousePos = local_to_map(to_local((pos - halfSize) / owner.getCurrentZoom()))
+		lastMousePos = layers[Layer.OVERLAY].local_to_map(to_local((pos - halfSize) / owner.getCurrentZoom()))
 			
 		placeOverlay(lastMousePos)
 
