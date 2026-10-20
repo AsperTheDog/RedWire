@@ -1,6 +1,7 @@
 extends Node2D
 class_name World
 
+@export var layers: Array[TileMapLayer]
 
 enum Layer {
 	MACHINE,
@@ -12,27 +13,7 @@ enum Layer {
 	ALL
 }
 
-const GRID_SIZE: int = 1024
-const GRID_HALF: int = GRID_SIZE / 2
-const POWER_SHADER: Shader = preload("res://tiles/power.gdshader")
-
-var world: Dictionary = {}
-
-var powerData: PackedByteArray = PackedByteArray()
-var powerImage: Image
-var powerTexture: ImageTexture
-var powerDirty: bool = false
-
-var gridBackground: ColorRect
-
-@onready var layers: Array[TileMapLayer] = [
-	$Machines,
-	$Redstone1,
-	$Redstone2,
-	$Redstone3,
-	$Redstone4,
-	$Overlay
-]
+const REDSTONE_ALT_STEP: int = 16
 
 static var componentClasses: Dictionary = {
 	Component.Type.WIRE: Wire,
@@ -46,37 +27,35 @@ static var componentClasses: Dictionary = {
 	Component.Type.LAMP: Lamp
 }
 
+var world: Dictionary = {}
+var powerData: PowerData = PowerData.new()
+
+@onready var background: ColorRect = $Background
+
 
 func _ready():
 	Game.world = self
 	Game.wireChanged.connect(updateWireColor)
 	Game.eraserToggled.connect(onEraserToggle)
+	Game.bgChanged.connect(func(color: Color): background.color = color)
 	updateWireColor(Game.wireColor)
-	setupPowerTexture()
-	setupGridBackground()
+	background.color = Game.bgColor
+	setupShaders()
 	set_notify_transform(true)
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_TRANSFORM_CHANGED and powerTexture != null:
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
 		updateShaderOrigin()
 
 
-func setupPowerTexture():
-	powerData.resize(GRID_SIZE * GRID_SIZE * 4)
-	powerData.fill(0)
-	powerImage = Image.create_empty(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RGBA8)
-	powerTexture = ImageTexture.create_from_image(powerImage)
-	var tileSize := Vector2(layers[Layer.MACHINE].tile_set.tile_size)
+func setupShaders():
 	for layer in range(Layer.REDSTONE1, Layer.REDSTONE4 + 1):
-		var mat := ShaderMaterial.new()
-		mat.shader = POWER_SHADER
-		mat.set_shader_parameter("powerTex", powerTexture)
-		mat.set_shader_parameter("channel", layer - Layer.REDSTONE1)
-		mat.set_shader_parameter("tileSize", tileSize)
-		mat.set_shader_parameter("gridSize", float(GRID_SIZE))
-		layers[layer].use_parent_material = false
-		layers[layer].material = mat
+		powerData.bindCellTexture(layers[layer].material)
+	var wireMaterial := layers[Layer.REDSTONE1].material as ShaderMaterial
+	powerData.bindWireTextures(wireMaterial)
+	wireMaterial.set_shader_parameter("wireDisplay", Game.updateWires)
+	Game.wireDisplayUpdated.connect(func(value: bool): wireMaterial.set_shader_parameter("wireDisplay", value))
 	updateShaderOrigin()
 
 
@@ -85,43 +64,9 @@ func updateShaderOrigin():
 		(layers[layer].material as ShaderMaterial).set_shader_parameter("origin", global_position)
 
 
-func setupGridBackground():
-	var tileSize := Vector2(layers[Layer.MACHINE].tile_set.tile_size)
-	gridBackground = ColorRect.new()
-	gridBackground.position = -tileSize * GRID_HALF
-	gridBackground.size = tileSize * GRID_SIZE
-	gridBackground.z_index = -1
-	gridBackground.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	gridBackground.color = Game.bgColor
-	add_child(gridBackground)
-	Game.bgChanged.connect(func(color: Color): gridBackground.color = color)
-
-
-func isInBounds(pos: Vector2i) -> bool:
-	return pos.x >= -GRID_HALF and pos.x < GRID_HALF and pos.y >= -GRID_HALF and pos.y < GRID_HALF
-
-
-func setPower(layer: Layer, pos: Vector2i, power: int):
-	if not isInBounds(pos): return
-	var idx := ((pos.y + GRID_HALF) * GRID_SIZE + pos.x + GRID_HALF) * 4 + layer - Layer.REDSTONE1
-	var value := power * 17
-	if powerData[idx] == value: return
-	powerData[idx] = value
-	powerDirty = true
-
-
-func flushPower():
-	if not powerDirty: return
-	powerDirty = false
-	powerImage.set_data(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RGBA8, powerData)
-	powerTexture.update(powerImage)
-
-
 func updateWireColor(color: Color):
-	layers[Layer.REDSTONE1].modulate = color
-	layers[Layer.REDSTONE2].modulate = color
-	layers[Layer.REDSTONE3].modulate = color
-	layers[Layer.REDSTONE4].modulate = color
+	for layer in range(Layer.REDSTONE1, Layer.REDSTONE4 + 1):
+		layers[layer].modulate = color
 
 
 func onEraserToggle(active: bool):
@@ -133,26 +78,23 @@ func isRedstoneLayer(layer: Layer) -> bool:
 
 
 func setCell(layer: Layer, pos: Vector2i, source: int, atlasCoords: Vector2i, alternative: int):
-	if isRedstoneLayer(layer):
-		setPower(layer, pos, 15 - (alternative & 15))
-		alternative &= ~15
 	layers[layer].set_cell(pos, source, atlasCoords, alternative)
+
+
+func setRedstoneCell(layer: Layer, pos: Vector2i, source: int, atlasCoords: Vector2i, rot: int, power: int):
+	powerData.setCellPower(layer - Layer.REDSTONE1, pos, power)
+	layers[layer].set_cell(pos, source, atlasCoords, rot * REDSTONE_ALT_STEP)
 
 
 func eraseCell(layer: Layer, pos: Vector2i):
 	if isRedstoneLayer(layer):
-		setPower(layer, pos, 0)
+		powerData.setCellPower(layer - Layer.REDSTONE1, pos, 0)
 	layers[layer].erase_cell(pos)
 
 
 func getTileAt(pos: Vector2i) -> Component:
 	if pos not in world: return null
 	return world[pos]
-
-
-func getTileConnectionIDAt(pos: Vector2i, dir: int) -> int:
-	if pos not in world: return -1
-	return world[pos].getConnectionID(dir)
 
 
 func isTileConnectedAt(pos: Vector2i, dir: int) -> bool:
@@ -188,8 +130,15 @@ func isTileEmpty(pos: Vector2i):
 
 func empty():
 	for pos in world:
+		world[pos].discard()
 		cleanAllLayersAt(pos)
 	world.clear()
+	powerData.reset()
+
+
+func startComponents():
+	for pos in world:
+		world[pos].start()
 	
 
 
@@ -204,7 +153,7 @@ var vert: bool = false
 
 
 func _process(delta: float) -> void:
-	flushPower()
+	powerData.flush()
 	if dragging:
 		updateDragging()
 	if Input.is_action_just_pressed("interact"):
@@ -235,7 +184,7 @@ func updateDragging():
 
 
 func placeComponent(type: Component.Type, pos: Vector2i, rot: int):
-	if not isInBounds(pos): return
+	if not PowerData.isInBounds(pos): return
 	if pos in world and world[pos].isEqualToNew(type): return
 	if type == Component.Type.NONE:
 		if pos not in world:

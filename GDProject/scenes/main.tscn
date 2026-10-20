@@ -4,6 +4,43 @@
 [ext_resource type="TileSet" uid="uid://buv88dy0yaxhi" path="res://main.tres" id="2_0ng7n"]
 [ext_resource type="PackedScene" uid="uid://diurl1x0378ds" path="res://scenes/UI.tscn" id="2_gv0m2"]
 [ext_resource type="Script" uid="uid://cg4q2hpj3fgwa" path="res://scripts/World.gd" id="3_n4iy2"]
+[ext_resource type="Shader" uid="uid://br0f23ev0jln2" path="res://tiles/power.gdshader" id="4_tbgi4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tefeu"]
+shader = ExtResource("4_tbgi4")
+shader_parameter/channel = 0
+shader_parameter/tileSize = Vector2(16, 16)
+shader_parameter/gridSize = 1024.0
+shader_parameter/origin = Vector2(0, 0)
+shader_parameter/useWires = true
+shader_parameter/wireDisplay = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o6xl0"]
+shader = ExtResource("4_tbgi4")
+shader_parameter/channel = 1
+shader_parameter/tileSize = Vector2(16, 16)
+shader_parameter/gridSize = 1024.0
+shader_parameter/origin = Vector2(0, 0)
+shader_parameter/useWires = false
+shader_parameter/wireDisplay = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tipki"]
+shader = ExtResource("4_tbgi4")
+shader_parameter/channel = 2
+shader_parameter/tileSize = Vector2(16, 16)
+shader_parameter/gridSize = 1024.0
+shader_parameter/origin = Vector2(0, 0)
+shader_parameter/useWires = false
+shader_parameter/wireDisplay = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_85g3d"]
+shader = ExtResource("4_tbgi4")
+shader_parameter/channel = 3
+shader_parameter/tileSize = Vector2(16, 16)
+shader_parameter/gridSize = 1024.0
+shader_parameter/origin = Vector2(0, 0)
+shader_parameter/useWires = false
+shader_parameter/wireDisplay = true
 
 [node name="Main" type="Node2D" unique_id=195847132]
 texture_filter = 1
@@ -11,9 +48,10 @@ script = ExtResource("1_a0q4y")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=246243156]
 
-[node name="world" type="Node2D" parent="." unique_id=698323523]
+[node name="world" type="Node2D" parent="." unique_id=698323523 node_paths=PackedStringArray("layers")]
 texture_filter = 1
 script = ExtResource("3_n4iy2")
+layers = [NodePath("Machines"), NodePath("Redstone1"), NodePath("Redstone2"), NodePath("Redstone3"), NodePath("Redstone4"), NodePath("Overlay")]
 
 [node name="Machines" type="TileMapLayer" parent="world" unique_id=1858598081]
 texture_filter = 1
@@ -22,21 +60,21 @@ tile_set = ExtResource("2_0ng7n")
 
 [node name="Redstone1" type="TileMapLayer" parent="world" unique_id=411737152]
 z_index = 1
-use_parent_material = true
+material = SubResource("ShaderMaterial_tefeu")
 tile_set = ExtResource("2_0ng7n")
 
 [node name="Redstone2" type="TileMapLayer" parent="world" unique_id=1002177599]
 z_index = 1
-use_parent_material = true
+material = SubResource("ShaderMaterial_o6xl0")
 tile_set = ExtResource("2_0ng7n")
 
 [node name="Redstone3" type="TileMapLayer" parent="world" unique_id=481780867]
 z_index = 1
-use_parent_material = true
+material = SubResource("ShaderMaterial_tipki")
 tile_set = ExtResource("2_0ng7n")
 
 [node name="Redstone4" type="TileMapLayer" parent="world" unique_id=1410426044]
-use_parent_material = true
+material = SubResource("ShaderMaterial_85g3d")
 tile_set = ExtResource("2_0ng7n")
 
 [node name="Overlay" type="TileMapLayer" parent="world" unique_id=1254356420]
@@ -44,5 +82,13 @@ modulate = Color(1, 1, 1, 0.352941)
 z_index = 10
 use_parent_material = true
 tile_set = ExtResource("2_0ng7n")
+
+[node name="Background" type="ColorRect" parent="world" unique_id=668123267]
+z_index = -1
+offset_left = -8192.0
+offset_top = -8192.0
+offset_right = 8192.0
+offset_bottom = 8192.0
+mouse_filter = 2
 
 [node name="UI" parent="." unique_id=1440228870 instance=ExtResource("2_gv0m2")]

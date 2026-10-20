@@ -5,38 +5,61 @@ class CircuitNode:
 	var elem: Component
 	var side: int
 	var distance: int
-	
+
 	func _init(comp: Component, side: int, distance: int):
 		self.elem = comp
 		self.side = side
 		self.distance = distance
 
 
+var sourceId: int = -1
+var wireReach: PackedInt32Array = PackedInt32Array()
+var requested: bool = false
+var dead: bool = false
+var savedActive: bool = false
+
 var activated: bool = false:
 	set(value):
 		if activated == value: return
 		activated = value
-		update.emit(self, 15 if activated else 0)
+		emitPower(currentOutput())
 		Game.world.updateTextures(World.Layer.MACHINE, pos)
 		Game.world.updateTextures(World.Layer.REDSTONE1, pos)
 
 
 func _init(pos: Vector2i, rot: int):
-	self.pos = pos
-	self.rot = rot
+	super(pos, rot)
 	requestRegen()
 
 
 func die():
+	dead = true
 	deleted.emit(self)
+	clearWireEntries()
+	if sourceId != -1:
+		Game.world.powerData.freeSource(sourceId)
+		sourceId = -1
+
+
+func currentOutput() -> int:
+	return 15 if activated else 0
+
+
+func emitPower(power: int) -> void:
+	if dead: return
+	if sourceId != -1:
+		Game.world.powerData.setSourcePower(sourceId, power)
+	update.emit(self, power)
+
+
+func clearWireEntries() -> void:
+	for cell in wireReach:
+		Game.world.powerData.removeWireSource(cell, sourceId)
+	wireReach.clear()
 
 
 func getType() -> Type:
 	return Type.GENERATOR
-
-
-func isEqual(other: Component):
-	return other.getType() == getType() and other.pos == pos and other.activated == activated
 
 
 func isEqualToNew(type: Type):
@@ -52,7 +75,7 @@ func updateTileAtLayer(layer: World.Layer):
 		World.Layer.MACHINE:
 			Game.world.setCell(layer, pos, 1, Vector2i(1 if activated else 0, 3), 0)
 		World.Layer.REDSTONE1:
-			Game.world.setCell(layer, pos, 3, Vector2i(0, 3), 0 + 15 - (15 if activated else 0))
+			Game.world.setRedstoneCell(layer, pos, 3, Vector2i(0, 3), 0, currentOutput())
 
 
 func interact():
@@ -63,20 +86,27 @@ func onNeighborChanged(dir: int):
 	requestRegen()
 
 
-var requested: bool = false
 func requestRegen():
 	if requested: return
 	requested = true
-	regenConnections.call_deferred(15 if activated else 0)
+	regenConnections.call_deferred(currentOutput())
 
 
 func regenConnections(currentPower: int):
+	if dead:
+		requested = false
+		return
 	deleted.emit(self)
+	clearWireEntries()
+	if sourceId == -1:
+		sourceId = Game.world.powerData.allocSource(self)
+	if sourceId != -1:
+		Game.world.powerData.setSourcePower(sourceId, currentPower)
 	var nodesToExplore: Array[CircuitNode] = []
 	var neighbors := getOutputs()
 	for side in neighbors.size():
-		if neighbors[side] != null: 
-				nodesToExplore.append(CircuitNode.new(neighbors[side], Side.opposite[side], 1))
+		if neighbors[side] != null:
+			nodesToExplore.append(CircuitNode.new(neighbors[side], Side.opposite[side], 1))
 	while not nodesToExplore.is_empty():
 		var nextNode: CircuitNode = nodesToExplore.pop_front()
 		if not nextNode.elem.registerConnection(self, nextNode.side, nextNode.distance, currentPower):
@@ -94,7 +124,7 @@ func getOutputs() -> Array[Component]:
 	for side in Side.ALL:
 		var currentTile := Game.world.getTileAt(pos + Side.vectors[side])
 		var currentSideID := currentTile.getConnectionID(Side.opposite[side]) if currentTile != null else -1
-		if currentSideID != -1: 
+		if currentSideID != -1:
 			neighbors[side] = currentTile
 	return neighbors
 
@@ -104,4 +134,14 @@ func getMeta():
 
 
 func applyMeta(meta: Array):
-	activated = meta[0]
+	savedActive = meta[0]
+
+
+func start():
+	activated = savedActive
+
+
+func discard():
+	dead = true
+	sourceId = -1
+	wireReach.clear()

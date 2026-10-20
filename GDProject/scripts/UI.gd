@@ -79,7 +79,6 @@ func onWireColorChange(color: Color):
 
 
 func onBGColorChange(_color: Color):
-	# The picked color is drawn by World inside the grid, everything outside the grid stays black
 	$BackgroundLayer/ColorRect.color = Color.BLACK
 
 

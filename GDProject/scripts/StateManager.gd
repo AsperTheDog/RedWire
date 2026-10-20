@@ -86,5 +86,6 @@ func loadProject(path: String) -> bool:
 		world.placeComponent(data[pos]["type"], pos, data[pos]["rot"])
 		if pos not in world.world: continue
 		world.world[pos].applyMeta(data[pos]["meta"])
+	world.startComponents.call_deferred()
 	Game.isEditDirty = false
 	return true

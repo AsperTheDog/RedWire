@@ -2,12 +2,9 @@ class_name Crossing extends Component
 
 
 func _init(pos: Vector2i, rot: int) -> void:
-	self.pos = pos
-	self.rot = rot
-	self.inputs.append(Connection.new())
-	self.inputs.back().powersChanged.connect(onPowerUpdate.bind(0))
-	self.inputs.append(Connection.new())
-	self.inputs.back().powersChanged.connect(onPowerUpdate.bind(1))
+	super(pos, rot)
+	addInput()
+	addInput()
 
 
 func getConnectionID(dir: int) -> int:
@@ -34,25 +31,25 @@ func updateTileAtLayer(layer: World.Layer):
 		World.Layer.MACHINE:
 			Game.world.setCell(layer, pos, 1, Vector2i(0, 4), rot)
 		World.Layer.REDSTONE1:
-			Game.world.setCell(layer, pos, 3, Vector2i(0, 4), rot * 16 + 15 - inputs[1].power)
+			Game.world.setRedstoneCell(layer, pos, 3, Vector2i(0, 4), rot, inputs[1].power)
 		World.Layer.REDSTONE2:
-			Game.world.setCell(layer, pos, 3, Vector2i(1, 4), rot * 16 + 15 - inputs[0].power)
+			Game.world.setRedstoneCell(layer, pos, 3, Vector2i(1, 4), rot, inputs[0].power)
 
 
 func onPowerUpdate(id :int):
 	match id:
-		0: Game.world.updateTextures(World.Layer.REDSTONE2, self.pos)
-		1: Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+		0: Game.world.updateTextures(World.Layer.REDSTONE2, pos)
+		1: Game.world.updateTextures(World.Layer.REDSTONE1, pos)
 
 
 func onNeighborChanged(dir: int):
 	var trueDir := Side.removeRotation(dir, rot)
 	if trueDir == Side.UP or trueDir == Side.DOWN:
-		Game.world.updateTextures(World.Layer.REDSTONE2, self.pos)
+		Game.world.updateTextures(World.Layer.REDSTONE2, pos)
 		for source in inputs[0].sources:
 			source.requestRegen()
 	else:
-		Game.world.updateTextures(World.Layer.REDSTONE1, self.pos)
+		Game.world.updateTextures(World.Layer.REDSTONE1, pos)
 		for source in inputs[1].sources:
 			source.requestRegen()
 

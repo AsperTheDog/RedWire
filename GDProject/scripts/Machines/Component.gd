@@ -21,73 +21,35 @@ class Connection:
 	signal powersChanged
 
 	var power: int = 0
+	# source -> Vector2i(distance, power the source gives)
 	var sources: Dictionary = {}
-			
-	var maxSource: Component = null
-	
-	var shouldUpdate: bool = true
-	
-	
-	func resetSources() -> void:
-		for source in sources:
-			if shouldUpdate:
-				source.update.disconnect(sourceUpdate)
-			source.deleted.disconnect(deleteSource)
-		sources.clear()
-		power = 0
-		powersChanged.emit()
-	
-	func setSourceUpdateActive(doSet: bool) -> void:
-		for source in sources:
-			if doSet: source.update.connect(sourceUpdate)
-			else: source.update.disconnect(sourceUpdate)
-		shouldUpdate = doSet
-		recalculatePower()
-	
+
 	func deleteSource(source: Component) -> void:
 		if source not in sources: return
-		if shouldUpdate:
-			source.update.disconnect(sourceUpdate)
+		source.update.disconnect(sourceUpdate)
 		source.deleted.disconnect(deleteSource)
 		sources.erase(source)
 		recalculatePower()
 
-	func registerSource(source: Component, distance: int, currentPow: int, shouldUpdate: bool = true) -> bool:
+	func registerSource(source: Component, distance: int, currentPow: int) -> bool:
 		if source in sources: return false
-		self.shouldUpdate = shouldUpdate
-		if shouldUpdate:
-			source.update.connect(sourceUpdate)
+		source.update.connect(sourceUpdate)
 		source.deleted.connect(deleteSource)
 		sources[source] = Vector2i(distance, max(0, currentPow - distance))
 		recalculatePower()
 		return true
-	
+
 	func sourceUpdate(source: Component, sourcePow: int) -> void:
 		sources[source].y = max(0, sourcePow - sources[source].x)
 		recalculatePower()
-	
+
 	func recalculatePower() -> void:
-		if not shouldUpdate:
-			var prevPow = power
-			power = 0
-			if prevPow != 0:
-				powersChanged.emit()
-			return 
 		var newPower = 0
 		for source in sources:
-			var data: Vector2i = sources[source]
-			if data.y >= newPower:
-				newPower = data.y
-				maxSource = source
+			newPower = max(newPower, sources[source].y)
 		if power != newPower:
 			power = newPower
 			powersChanged.emit()
-	
-	func _to_string() -> String:
-		var str: String = "Sources: "
-		for source in sources:
-			str += str(source.pos) + " -> " + str(sources[source]) + " | "
-		return str
 
 
 var inputs: Array[Connection] = []
@@ -105,6 +67,16 @@ func die():
 	propagateRegenRequest()
 
 
+func addInput() -> void:
+	var id := inputs.size()
+	inputs.append(Connection.new())
+	inputs[id].powersChanged.connect(onPowerUpdate.bind(id))
+
+
+func onPowerUpdate(id: int):
+	pass
+
+
 func getConnectionID(dir: int) -> int:
 	return -1
 
@@ -120,8 +92,7 @@ func getNeighbors(from: int) -> Array[Component]:
 func registerConnection(source: Component, side: int, distance: int, currentPow: int) -> bool:
 	var connID = getConnectionID(side)
 	if connID == -1: return false
-	var shouldUpdate: bool = getType() != Component.Type.WIRE or Game.updateWires
-	return inputs[connID].registerSource(source, distance, currentPow, shouldUpdate)
+	return inputs[connID].registerSource(source, distance, currentPow)
 
 
 func updateTileAtLayer(layer: World.Layer):
@@ -134,10 +105,6 @@ func onNeighborChanged(dir: int):
 
 func getType() -> Type:
 	return Type.NONE
-
-
-func isEqual(other: Component):
-	return other.getType() == getType() and other.pos == pos and other.rot == rot
 
 
 func isEqualToNew(type: Type):
@@ -159,4 +126,12 @@ func getMeta():
 
 
 func applyMeta(meta: Array):
+	pass
+
+
+func start():
+	pass
+
+
+func discard():
 	pass

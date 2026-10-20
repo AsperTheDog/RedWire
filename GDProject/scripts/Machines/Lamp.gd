@@ -1,12 +1,9 @@
 class_name Lamp extends Component
 
 
-
 func _init(pos: Vector2i, rot: int) -> void:
-	self.pos = pos
-	self.rot = rot
-	self.inputs.append(Connection.new())
-	self.inputs.back().powersChanged.connect(onPowerUpdate.bind(0))
+	super(pos, rot)
+	addInput()
 
 
 func getConnectionID(dir: int) -> int:
@@ -23,15 +20,11 @@ func updateTileAtLayer(layer: World.Layer):
 
 
 func onPowerUpdate(id :int):
-	Game.world.updateTextures(World.Layer.MACHINE, self.pos)
+	Game.world.updateTextures(World.Layer.MACHINE, pos)
 
 
 func getType() -> Type:
 	return Type.LAMP
-
-
-func isEqual(other: Component):
-	return other.getType() == getType() and other.pos == pos
 
 
 func isEqualToNew(type: Type):
